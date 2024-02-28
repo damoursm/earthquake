@@ -1,0 +1,10 @@
+numpy
+scikit-learn
+scipy
+tensorflow
+keras
+matplotlib
+pandas
+tqdm>=4.48.0
+h5py
+jupyter
