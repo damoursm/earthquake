@@ -8,3 +8,4 @@ mkdir ~/scratch/code-snapshots
 rsync -av ../../earthquake ~/scratch/code-snapshots/ --exclude .git --exclude scripts --exclude env --exclude data
 
 rsync -av ./earthquake.sh ~/sbatch/
+rsync -av ./run.sh ~/sbatch/
