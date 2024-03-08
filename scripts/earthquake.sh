@@ -14,6 +14,8 @@ rsync -av --relative "$1" $SLURM_TMPDIR --exclude ".git" --exclude "scripts" --e
 
 cd $SLURM_TMPDIR/"$1"
 
+ls -a
+
 # Setup environment
 module purge
 module load StdEnv/2020
