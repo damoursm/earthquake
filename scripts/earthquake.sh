@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name=earthquake                                               # Job name
+#SBATCH --job-name=earthquakeTest                                               # Job name
 #SBATCH --cpus-per-task=1                                                   # Ask for 1 CPUs
 #SBATCH --mem=1Gb                                                           # Ask for 1 GB of RAM
 #SBATCH --output=/scratch/logs/slurm-%j-%x.out                              # log file
 #SBATCH --error=/scratch/logs/slurm-%j-%x.error                             # log file
-#SBATCH --time=00:01:00                                                     # Run time
+#SBATCH --time=00:05:00                                                     # Run time
 
 # Arguments
 # $1: Path to code directory
