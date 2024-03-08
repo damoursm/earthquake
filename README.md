@@ -1,5 +1,12 @@
 # earthquake
 
+## Data
+Instance data have been downloaded and available here: `~/projects/def-sponsor00/earthquake/data/instance` 
+STEAD data not yer downloaded but can be added here: `~/projects/def-sponsor00/earthquake/data/stead`
+You want to downlaod in parallel for STEAD, put all your the urls in a file (files.txt) and do:  `cat files.txt | xargs -n 1 -P 0 wget -q` 
+-P 0 let xargs choose the number of parallels work. You can assign a hard number if you want
+
+
 ## Steps to train in the cluster
 1. Using the terminal, login to your cluster, preferrably through ssh (e.g: ssh username@ift6759.calculquebec.cloud)
 1. Create a folder where you will clone your repo: mkdir documents
