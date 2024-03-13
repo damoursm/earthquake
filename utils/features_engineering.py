@@ -1,5 +1,7 @@
 import pandas as pd
 from matplotlib import pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 import random
 
@@ -94,5 +96,110 @@ def make_shap(train_data, model, features, verbose=False):
     return imp_features
 
 
-def PCA():
-    pass
+def assign_to_grid(lat, lon, lat_min, lon_min, grid_size=0.5):
+    lat_idx = int((lat - lat_min) / grid_size)
+    lon_idx = int((lon - lon_min) / grid_size)
+    return (lat_idx, lon_idx)
+
+
+def cap_outliers(data, is_series, outliers_scaler=None, up_limit=2, low_limit=2):
+    if is_series:
+        data_cap = data#.copy(deep=True)
+        if outliers_scaler:
+            upper_limit = outliers_scaler['upper_limit']
+            lower_limit = outliers_scaler['lower_limit']
+            new_scaler = outliers_scaler
+        else:
+            upper_limit = data.mean() + up_limit * data.std()
+            lower_limit = data.mean() - low_limit * data.std()
+            new_scaler = {'upper_limit': upper_limit, 'lower_limit': lower_limit}
+
+        data_cap = np.where(
+            data > upper_limit, upper_limit,
+            np.where(
+                data < lower_limit, lower_limit, data
+            )
+        )
+    else:
+        data_cap = data.copy(deep=True)
+        if outliers_scaler:
+            new_scaler = outliers_scaler
+        else:
+            new_scaler = {}
+            for col in data.columns:
+                upper_limit = data[col].mean() + up_limit * data[col].std()
+                lower_limit = data[col].mean() - low_limit * data[col].std()
+                new_scaler[col] = {'upper_limit': upper_limit, 'lower_limit': lower_limit}
+            # print(upper_limit)
+            # print(lower_limit)
+
+            # TODO corriger warning
+            #  C:\Users\Math\anaconda3\lib\site-packages\pandas\core\indexing.py:965: SettingWithCopyWarning:
+            #  A value is trying to be set on a copy of a slice from a DataFrame.
+            #  Try using .loc[row_indexer,col_indexer] = value instead
+            #  See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+            #    self.obj[item] = s
+            data_cap[col] = np.where(
+                data[col] > upper_limit, upper_limit,
+                np.where(
+                    data[col] < lower_limit, lower_limit, data[col]
+                )
+            )
+            # print(data[col].describe())
+            # print('-------------------------------------')
+
+    return data_cap, new_scaler
+
+
+def scale(data, features, scaling_range=(0, 1), scaling_type='MinMax', scaler=None, outliers_limit=False, outliers_scaler=None, keep_raw=[]):
+
+    is_series = isinstance(data, pd.Series)
+    if is_series:  # target scaling
+        index = data[features].index
+        data[features] = data[features].values.reshape(-1, 1)
+
+    # TODO verifier si la logique de cap fonctionne
+    if outliers_limit:  # This caps outliers only for the features that are used by the model
+        data[features], outliers_scaler = cap_outliers(
+            data[features], is_series,
+            outliers_scaler=outliers_scaler,
+            up_limit=outliers_limit,
+            low_limit=outliers_limit
+        )
+
+    feats = list(outliers_scaler.keys()) if outliers_scaler else features  # TODO We need to use the same FEATURES as the ones used in training the model
+
+    if scaler:  # Use the provided scaler
+        new_scaler = False
+        # print(scaler.data_min)
+        # print(scaler.data_max)
+        # scaler.fit(data)
+        scaled = scaler.transform(data[feats])
+    else:  # Create new scaler
+        if scaling_type == 'MinMax':
+            new_scaler = MinMaxScaler(feature_range=scaling_range).fit(data[features])
+            scaled = new_scaler.transform(data[features])
+            # scaled = new_scaler.fit_transform(data[features])
+        elif scaling_type == 'Standard':
+            new_scaler = StandardScaler().fit(data[features])
+            scaled = new_scaler.transform(data[features])
+            # scaled = new_scaler.fit_transform(data[features])
+
+    # # Integer encode direction (pour si on doit encoder des string)
+    # encoder = LabelEncoder()
+    # values[:, 4] = encoder.fit_transform(values[:, 4])
+    # # ensure all data is float
+    # values = values.astype('float32')
+
+    if is_series:  # target scaling
+        # print('Target Sacling:')
+        # print(scaled)
+        scaled_data = pd.DataFrame(scaled, index=index, columns=['weighted_target'])
+    else:
+        scaled_data = pd.DataFrame(scaled, index=data.index, columns=feats)
+        scaled_data = scaled_data[features]
+
+    for col in keep_raw:
+        scaled_data[col] = data[col]
+
+    return scaled_data, new_scaler, outliers_scaler

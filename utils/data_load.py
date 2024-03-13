@@ -10,7 +10,6 @@ from matplotlib import pyplot as plt
 
 
 def load_dataset(filename):
-
     with h5py.File(filename, 'r') as f:
         if 'data' in f:
             data = f['data']
