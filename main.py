@@ -49,9 +49,6 @@ def main():
         axis=1
     )
     
-    # features scaling
-    min_max_scaler = MinMaxScaler()
-    df_normalize = min_max_scaler.fit_transform(df)
 
     # Make SHAP features importance Analysis
 
