@@ -1,6 +1,8 @@
 import mlflow
 import skopt
 import pandas as pd
+import shap
+from sklearn.preprocessing import MinMaxScaler
 
 from utils.features_engineering import assign_to_grid
 from utils.training import train_validate
@@ -46,9 +48,10 @@ def main():
         lambda x: assign_to_grid(x['station_latitude_deg'], x['station_longitude_deg'], lat_min, lon_min),
         axis=1
     )
-
-    # Make features scaling
-
+    
+    # features scaling
+    min_max_scaler = MinMaxScaler()
+    df_normalize = min_max_scaler.fit_transform(df)
 
     # Make SHAP features importance Analysis
 
