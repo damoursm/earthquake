@@ -9,3 +9,4 @@ tqdm>=4.48.0
 h5py
 jupyter
 torch
+shap
