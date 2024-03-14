@@ -14,3 +14,29 @@ HYPERPARAMETERS = [
     skopt.space.Real(10, 70, name='t_score_feats_filter'),
     skopt.space.Categorical([70], name='t_score_feats_filter'),
 ]
+
+NB_ITER = 10
+
+METRIC_EVAL = 'AUC'
+
+MODEL = 'Neural Network'
+MODEL = 'Random Forest'
+
+MODEL = (
+    'tranformer',
+    {
+    'hp1': 1.9,
+    'hp2': 1.9,
+    'hp3': 1.9,
+    }
+)
+
+MODEL = {
+    'model_name': 'tranformer',
+    'hyperparmas': {
+        'hp1': 1.9,
+        'hp2': 1.9,
+        'hp3': 1.9,
+    }
+}
+
