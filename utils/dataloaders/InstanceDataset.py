@@ -49,13 +49,15 @@ class InstanceDataset(Dataset):
         else:
             sample_size = input.shape[1]
             p_sample = event_metadata['trace_P_arrival_sample'][index]
-            s_sample = round(event_metadata['trace_S_arrival_sample'][index])
+            s_sample = event_metadata['trace_S_arrival_sample'][index]
 
             if np.isnan(p_sample):
                 p_sample = 0
 
             if np.isnan(s_sample):
                 s_sample = sample_size - 1
+
+            s_sample = round(s_sample)
 
             target = torch.zeros(sample_size)
             target[p_sample:s_sample+1] = torch.ones(s_sample - p_sample + 1)
