@@ -5,7 +5,7 @@ import torch
 from torch.utils.data import Dataset
 
 class InstanceDataset(Dataset):
-    def __init__(self, event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, target_type="box_square", padding_type="sample", padding_value=280, transform=None):
+    def __init__(self, event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, target_type="box_square", padding_type="sample", padding_value=280, target_phase=True, phase_padding=20, transform=None):
         self.event_hdf5_file = event_hdf5_file
         self.noise_hdf5_file = noise_hdf5_file
         self.noise_metadata = pd.read_csv(noise_metadata_file)
@@ -14,6 +14,8 @@ class InstanceDataset(Dataset):
         self.target_type = target_type
         self.padding_type = padding_type
         self.padding_value = padding_value
+        self.target_phase = target_phase
+        self.phase_padding = phase_padding
 
 
     def __len__(self):
@@ -30,7 +32,7 @@ class InstanceDataset(Dataset):
             filename = self.event_hdf5_file
             with h5py.File(filename, 'r') as f:
                 input = torch.tensor(f['data'][trace_name][:])
-            target = self.get_event_target(input, idx, self.event_metadata, self.target_type, self.padding_type, self.padding_value)
+            target, p_target, s_target = self.get_event_target(input, idx, self.event_metadata, self.target_type, self.padding_type, self.padding_value, self.target_phase, self.phase_padding)
         else:
             #Access noise
             index = idx % eventsCount
@@ -38,14 +40,17 @@ class InstanceDataset(Dataset):
             filename = self.noise_hdf5_file
             with h5py.File(filename, 'r') as f:
                 input = torch.tensor(f['data'][trace_name][:])
-            target = self.get_noise_target(input, self.target_type)
+            target, p_target, s_target = self.get_noise_target(input, self.target_type, self.target_phase)
 
-        return input, target
+        return input, target, p_target, s_target
 
 
-    def get_event_target(self, input, index, event_metadata, target_type, padding_type, padding_value):
+    def get_event_target(self, input, index, event_metadata, target_type, padding_type, padding_value, target_phase, phase_padding):
+        s_target = None
+        p_target = None
+        
         if target_type == "binary":
-            return 1
+            target = 1
         else:
             sample_size = input.shape[1]
             p_sample = event_metadata['trace_P_arrival_sample'][index]
@@ -69,7 +74,9 @@ class InstanceDataset(Dataset):
             elif target_type == "box_trapezoidal":
                 final_start_index, start_padding, final_end_index, end_padding = self.get_box_trapezoidal(sample_size, raw_start_index, raw_end_index, p_sample, s_sample)
             else:
-                return 1
+                start_padding = None
+                end_padding = None
+                target = 1
             
             if start_padding is not None:
                 target[final_start_index:p_sample] = start_padding
@@ -77,17 +84,41 @@ class InstanceDataset(Dataset):
             if end_padding is not None:
                 target[s_sample+1:final_end_index+1] = end_padding
 
-            return target
+            if target_phase and ((target_type == "box_square") or (target_type == "box_trapezoidal")):
+                p_target = self.get_phase_target(event_metadata['trace_P_arrival_sample'][index], sample_size, phase_padding) 
+                s_target = self.get_phase_target(event_metadata['trace_S_arrival_sample'][index], sample_size, phase_padding)
             
+        return target, p_target, s_target
+    
 
-    def get_noise_target(self, input, target_type):
-        if target_type == "binary":
-            return 0
-        elif (target_type == "box_square") or (target_type == "box_trapezoidal"):
-            return torch.zeros(input.shape[1])
-        else:
-            return 0 #Not optimized if/else for code clarity
-        
+    def get_phase_target(self, phase_sample, sample_size, phase_padding):
+        target = torch.zeros(sample_size)
+        if not np.isnan(phase_sample):
+            phase_sample = round(phase_sample)
+            start_index = phase_sample - phase_padding
+            padding = np.linspace(0, 1, phase_padding + 1)
+            final_start_index = max(0, start_index)
+            target[final_start_index:phase_sample+1] = torch.from_numpy(padding[final_start_index - start_index:])
+
+            end_index = phase_sample + phase_padding
+            padding = np.flip(np.linspace(0, 1, phase_padding + 1))
+            final_end_index = min(sample_size - 1, end_index)
+            target[phase_sample+1:final_end_index+1] = torch.from_numpy(padding[1:final_end_index - phase_sample + 1].copy())
+        return target
+
+
+    def get_noise_target(self, input, target_type, target_phase):
+        target = 0
+        phase_target = None
+
+        if (target_type == "box_square") or (target_type == "box_trapezoidal"):
+            target = torch.zeros(input.shape[1])
+            if phase_target:
+                phase_target = torch.zeros(input.shape[1])
+    
+        return target, phase_target, phase_target
+
+
 
     def get_box_square_padding(self, sample_size, raw_start_index, raw_end_index, p_sample, s_sample):
         """
