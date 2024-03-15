@@ -1,10 +1,9 @@
 import mlflow
 import skopt
 import pandas as pd
-import shap
 from sklearn.preprocessing import MinMaxScaler
 
-from utils.features_engineering import assign_to_grid
+from utils.features_engineering import assign_to_grid, scale, shap_feat_imp
 from utils.training import train_validate, test
 from utils.data_load import load_dataset
 from utils.dataloaders.InstanceDataset import InstanceDataset
@@ -59,6 +58,7 @@ def main():
     #.join('trace_name')
 
     # Make SHAP features importance Analysis
+    # shap_feat_imp()
 
 
     # ---------------------- Mathieu ----------------------
