@@ -4,6 +4,7 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import os
+import torch
 
 
 def plot_trace_prediction(trace_name, data, p_samples, s_samples, detection_probs, p_arrival_probs, s_arrival_probs, save_figs):
@@ -150,10 +151,15 @@ def plot_trace_prediction(trace_name, data, p_samples, s_samples, detection_prob
     x = np.linspace(0, data.shape[1], data.shape[1], endpoint=True)
     
     #Plot predictions
-    plt.plot(x, detection_probs, '--', color='g', alpha = 0.5, linewidth=1.5, label='Earthquake')
-    plt.plot(x, p_arrival_probs, '--', color='b', alpha = 0.5, linewidth=1.5, label='P_arrival')
-    plt.plot(x, s_arrival_probs, '--', color='r', alpha = 0.5, linewidth=1.5, label='S_arrival')
-    
+    if torch.is_tensor(detection_probs):
+        plt.plot(x, detection_probs, '--', color='g', alpha = 0.5, linewidth=1.5, label='Earthquake')
+
+    if torch.is_tensor(p_arrival_probs):
+        plt.plot(x, p_arrival_probs, '--', color='b', alpha = 0.5, linewidth=1.5, label='P_arrival')
+
+    if torch.is_tensor(s_arrival_probs):
+        plt.plot(x, s_arrival_probs, '--', color='r', alpha = 0.5, linewidth=1.5, label='S_arrival')
+
     plt.tight_layout()       
     plt.ylim((-0.1, 1.1)) 
     plt.xlim(0, data.shape[1])                                            
