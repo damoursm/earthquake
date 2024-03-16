@@ -175,3 +175,29 @@ def plot_trace_prediction(trace_name, data, p_samples, s_samples, detection_prob
     fig.savefig(os.path.join(save_figs, str(trace_name).replace(':', '-')+'.png')) 
     plt.close(fig)
     plt.clf()
+
+
+
+def plot_error_and_accuracy(errors, accuracies, title=""):
+    """
+    Plot the time-series of errors and accuracies for validation and train splits
+    
+    Args:
+        errors (dict): dictionary of errors over epochs {"train": [], "val": []}
+        accuracies (dict): similar, for accuracy
+        title (optional, str): Plot title. Defaults to "".
+    """
+    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+    x = range(len(errors["train"]))
+    ax1.plot(x, errors["train"], label="Training")
+    ax1.plot(x, errors["val"], label="Validation")
+    ax1.title.set_text("Cross-entropy error")
+
+    ax2.plot(x, accuracies["train"], label="Training")
+    ax2.plot(x, accuracies["val"], label="Validation")
+    ax2.title.set_text("Prediction Accuracy")
+
+    if title:
+        plt.suptitle(title)
+    plt.legend()
+    plt.show()

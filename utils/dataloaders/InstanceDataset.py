@@ -6,6 +6,10 @@ from torch.utils.data import Dataset
 import math
 
 class InstanceDataset(Dataset):
+    """
+    Raw Instance dataset.
+    Load events and noise from file and returns the 3 C waveforms, wether there is a earthquake or not, p phase and s phase
+    """
     def __init__(self, event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, target_type="box_square", padding_type="sample", padding_value=280, target_phase=True, phase_padding=20, remove_empty_phase=True, transform=None, split_index=0, split_percentage=[0.8, 0.15, 0.5]):
         self.event_hdf5_file = event_hdf5_file
         self.noise_hdf5_file = noise_hdf5_file
