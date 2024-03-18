@@ -9,12 +9,14 @@ from utils.data_load import load_dataset
 from utils.dataloaders.InstanceDataset import InstanceDataset
 
 from config import \
+    FEATURES, \
     HYPERPARAMETERS, \
     MODEL, \
     INSTANCE_EVENTS_FILENAME, \
     INSTANCE_NOISE_FILENAME, \
     INSTANCE_EVENTS_METADATA_FILENAME, \
     INSTANCE_NOISE_METADATA_FILENAME, \
+    FEATURES_SCALING, \
     NB_ITER
 
 '''
@@ -52,7 +54,17 @@ def main():
 
     # Signals
 
-    train_scaler = scale()
+    # Scaling
+    df_meta, train_scaler, outliers_scaler = scale(
+        df_meta,
+        FEATURES['numerical'].keys(),
+        scaling_params=FEATURES_SCALING,
+    )
+
+    # # features scaling
+    # min_max_scaler = MinMaxScaler()
+    # df_normalize = min_max_scaler.fit_transform(df_meta)
+
 
     # Join metadata with signals data
     #.join('trace_name')
