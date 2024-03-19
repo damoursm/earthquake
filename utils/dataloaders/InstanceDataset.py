@@ -50,26 +50,26 @@ class InstanceDataset(Dataset):
         """
         if(idx < self.events_size):
             index = idx + self.event_start_index
-            print(index)
+            # print(index)
             #Access events
             trace_name = self.event_metadata["trace_name"].iloc[index]
-            print(trace_name)
+            # print(trace_name)
             filename = self.event_hdf5_file
             with h5py.File(filename, 'r') as f:
-                input = torch.tensor(f['data'][trace_name][:])
+                input = torch.FloatTensor(f['data'][trace_name][:])
             target, p_target, s_target = self.get_event_target(input, index, self.event_metadata, self.target_type, self.padding_type, self.padding_value, self.target_phase, self.phase_padding)
         else:
             #Access noise
             index = (idx % self.events_size) + self.noise_start_index
-            print(index)
+            # print(index)
             trace_name = self.noise_metadata["trace_name"].iloc[index]
-            print(trace_name)
+            # print(trace_name)
             filename = self.noise_hdf5_file
             with h5py.File(filename, 'r') as f:
-                input = torch.tensor(f['data'][trace_name][:])
+                input = torch.FloatTensor(f['data'][trace_name][:])
             target, p_target, s_target = self.get_noise_target(input, self.target_type, self.target_phase)
 
-        return input, target, p_target, s_target
+        return input, target, p_target, s_target, trace_name
 
 
     def get_event_target(self, input, index, event_metadata, target_type, padding_type, padding_value, target_phase, phase_padding):

@@ -20,3 +20,6 @@ def push_mlflow(self, hyperparams, results, save_model=False, tags=None):
         if save_model:
             print('\nLogging model in MLflow:')
             mlflow.sklearn.log_model(self.clf, MODEL)
+
+
+

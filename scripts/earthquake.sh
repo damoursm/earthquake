@@ -23,5 +23,5 @@ source $SLURM_TMPDIR/venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
-python train.py
+python $2
 

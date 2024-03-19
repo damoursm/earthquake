@@ -178,7 +178,7 @@ def plot_trace_prediction(trace_name, data, p_samples, s_samples, detection_prob
 
 
 
-def plot_error_and_accuracy(errors, accuracies, title=""):
+def plot_error_and_accuracy(errors, accuracies, save_figs, title="Training report"):
     """
     Plot the time-series of errors and accuracies for validation and train splits
     
@@ -187,7 +187,7 @@ def plot_error_and_accuracy(errors, accuracies, title=""):
         accuracies (dict): similar, for accuracy
         title (optional, str): Plot title. Defaults to "".
     """
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
     x = range(len(errors["train"]))
     ax1.plot(x, errors["train"], label="Training")
     ax1.plot(x, errors["val"], label="Validation")
@@ -197,7 +197,11 @@ def plot_error_and_accuracy(errors, accuracies, title=""):
     ax2.plot(x, accuracies["val"], label="Validation")
     ax2.title.set_text("Prediction Accuracy")
 
-    if title:
-        plt.suptitle(title)
+    plt.suptitle(title)
     plt.legend()
-    plt.show()
+
+    fig.tight_layout()
+    fig.savefig(os.path.join(save_figs, str(title).replace(' ', '-')+'.png')) 
+
+    plt.close(fig)
+    plt.clf()
