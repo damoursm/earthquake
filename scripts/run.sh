@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-while getopts m:t:p: flag
+while getopts m:t:p:c:g flag
 do
     case "${flag}" in
         m) memory=${OPTARG};;
