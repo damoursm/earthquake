@@ -31,6 +31,8 @@ def train_detection_only(train_set, val_set, model, loss, correct_count, batch_s
     # create device based on GPU availability
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+    print(f"Using {device} for the training")
+
     # send model to device
     model = model.to(device)
 

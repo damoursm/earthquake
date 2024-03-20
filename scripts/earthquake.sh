@@ -9,6 +9,14 @@
 # Copy code dir to the compute node and cd there
 rsync -av --relative "$1" $SLURM_TMPDIR --exclude ".git" --exclude "scripts" --exclude "env" --exclude "data"
 
+# Copy data to the SLURM_TMPDIR to increase speed
+rsync -av --relative "$2" $SLURM_TMPDIR
+
+export SLURM_TMPDIR_EVENT_HDF5_FILE=$SLURM_TMPDIR/"$2"/Instance_events_counts.hdf5
+export SLURM_TMPDIR_EVENT_METADATA_FILE=$SLURM_TMPDIR/"$2"/metadata_Instance_events_v2.csv
+export SLURM_TMPDIR_NOISE_HDF5_FILE=$SLURM_TMPDIR/"$2"/Instance_noise.hdf5
+export SLURM_TMPDIR_NOISE_METADATA_FILE=$SLURM_TMPDIR/"$2"/metadata_Instance_noise.csv
+
 cd $SLURM_TMPDIR/"$1"
 
 ls -a
@@ -23,5 +31,5 @@ source $SLURM_TMPDIR/venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
-python $2
+python $3
 

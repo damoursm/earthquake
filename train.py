@@ -15,15 +15,16 @@ from dotenv import dotenv_values
 def main():
     env_values = dotenv_values(".env")
 
-    event_hdf5_file = env_values["EVENT_HDF5_FIILE"]
-    event_metadata_file = env_values["EVENT_METADATA_FILE"]
-    noise_hdf5_file = env_values["NOISE_HDF5_FILE"]
-    noise_metadata_file = env_values["NOISE_METADATA_FILE"]
+    event_hdf5_file = os.environ.get('SLURM_TMPDIR_EVENT_HDF5_FILE', env_values["EVENT_HDF5_FILE"])
+    event_metadata_file = os.environ.get('SLURM_TMPDIR_EVENT_METADATA_FILE', env_values["EVENT_METADATA_FILE"])
+    noise_hdf5_file = os.environ.get('SLURM_TMPDIR_NOISE_HDF5_FILE', env_values["NOISE_HDF5_FILE"])
+    noise_metadata_file = os.environ.get('SLURM_TMPDIR_NOISE_METADATA_FILE', env_values["NOISE_METADATA_FILE"])
 
     temp_dir = os.environ.get('SLURM_TMPDIR', env_values["TEMP_DIR"])
+
     final_output_dir = env_values["FINAL_OUTPUT_DIR"]
 
-    split_percentage=[0.05, 0.01, 0.94]
+    split_percentage=[0.0001, 0.0001, 0.9998]
 
     print("############################ Data set ############################")
 
