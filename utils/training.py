@@ -1,6 +1,7 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score
 
+from nn import cnn
 from config import features_list
 
 
@@ -21,6 +22,10 @@ def train_rf(hyperparams, train_data):
     )
     clf.fit(X_train, y_train)
     return clf
+
+
+def train_cnn(hyperparams, train_data):
+    cnn(hyperparams, train_data)
 
 
 def validate(model, test_data, metric_nm):
