@@ -4,6 +4,8 @@ mkdir ~/sbatch
 mkdir ~/scratch
 mkdir ~/scratch/logs
 mkdir ~/scratch/code-snapshots
+mkdir ~/scratch/output
+mkdir ~/scratch/output/default-train
 
 rsync -av ../../earthquake ~/scratch/code-snapshots/ --exclude .git --exclude scripts --exclude env --exclude data
 
