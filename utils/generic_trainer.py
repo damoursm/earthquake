@@ -28,8 +28,6 @@ def train_detection_only(train_set, val_set, model, loss, correct_count, batch_s
     returns errors: {"train": [], "val": []}, accuracy: {"train": [], "val": []}, monitor: GPUMonitor
     """
 
-    best_model_path = ""
-
     # create device based on GPU availability
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -52,8 +50,6 @@ def train_detection_only(train_set, val_set, model, loss, correct_count, batch_s
         val_set, batch_size=batch_size, shuffle=False, num_workers=2
     )
 
-    print(model)
-
     # custom object in order to monitor how much we use the GPU
     # you can have a look at it in 0. Imports and Utils
     monitor = GPUMonitor()
@@ -62,6 +58,9 @@ def train_detection_only(train_set, val_set, model, loss, correct_count, batch_s
     #
     # Start of the training procedure
     #
+
+    best_val_accuracy = 0
+    best_model_path = f"{temp_dir}/model.pt"
 
     for e in range(epochs):
 
@@ -135,6 +134,10 @@ def train_detection_only(train_set, val_set, model, loss, correct_count, batch_s
         # compute epoch-wise accuracies
         train_acc = train_correct / len(train_set) * 100
         val_acc = val_correct / len(val_set) * 100
+
+        if val_acc > best_val_accuracy:
+            best_val_accuracy = val_acc
+            torch.save(model.state_dict(), best_model_path)
 
         # store metrics
         accuracies["train"].append(train_acc)
