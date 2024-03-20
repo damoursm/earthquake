@@ -12,12 +12,12 @@ done
 
 if [ -z "$memory" ]
 then
-    $memory=32Gb
+    memory=32Gb
 fi
 
 if [ -z "$python_file" ]
 then
-    $python_file=train.py
+    python_file=train.py
 fi
 
 
