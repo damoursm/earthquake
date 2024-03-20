@@ -43,9 +43,9 @@ if [ -z "$time" ]
 then
     # The last 3 arguments are the sbatch script and the path to the code and python file to execute 
     sbatch --gpus-per-node=$gpu  --cpus-per-task=$cpu --mem=$memory --output=$output_file --error=$error_file $sbatch_executable_file $code_folder $data_folder $python_file
-    echo "Scheduled $python_file to run with $memory memory. See output in $output_file"
+    echo "Scheduled $python_file to run with $memory memory $cpu cpu(s) and $gpu gpu(s). See output in $output_file"
 else
     # The last 3 arguments are the sbatch script and the path to the code and python file to execute 
     sbatch --time=$time --gpus-per-node=$gpu  --cpus-per-task=$cpu --mem=$memory --output=$output_file --error=$error_file $sbatch_executable_file $code_folder $data_folder $python_file
-    echo "Scheduled $python_file to run with $memory memory for $time long. See output in $output_file"
+    echo "Scheduled $python_file to run with $memory memory $cpu cpu(s) and $gpu gpu(s) for $time long. See output in $output_file"
 fi
