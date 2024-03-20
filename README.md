@@ -16,8 +16,13 @@ You want to downlaod in parallel for STEAD:
   - NOISE_METADATA_FILE="data/instance_samples/metadata_Instance_noise_1k.csv"
   - FINAL_OUTPUT_DIR="output"
   - TEMP_DIR="temp"
-1. Duplicate the `train.py` file at the root of the project and edit it to train your own model following the structure. For instance, I can create `train_transformer_elisee.py`.
-
+2. Duplicate the `train.py` file at the root of the project and edit it to train your own model following the structure. For instance, I can create `train_transformer_elisee.py`.
+3. Use `tmux` to run your session. Once connected on the server:
+  - Type `tmux` to start a new session or `tmux attach` to recover from an old session. I suggest using it as tmux will keep your terminal session running even if you loose connection. Otherwise you might need to start from scratch
+  - Type `ctrl-b + %` to split your screen and `ctrl-b <arrow>` to navigate through the panes. I use it to be able to run simultaneously multiple terminals as one might be blocked by a long running task.
+  - Use `ctrl-b + z` to toggle one pane full screen or not
+  - Type `exit` to close tmux pane
+    
 ## Steps to train on your computer
 1. Make sure your environment file (`.env`) is properly set
 1. Execute your train file. For instance `python3 train_transformer_elisee.py` in terminal or using debugger in your IDE.
