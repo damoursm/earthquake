@@ -12,7 +12,7 @@ done
 
 if [ -z "$memory" ]
 then
-    memory=32Gb
+    memory=8Gb
 fi
 
 if [ -z "$python_file" ]
