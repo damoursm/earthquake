@@ -38,8 +38,8 @@ You want to downlaod in parallel for STEAD:
      - Set `FINAL_OUTPUT_DIR="scratch/<your username>/output/default-train"`. `default-train` is used as default but you can change it if you want to save output of different experiments. Just make sure the folder exists
 1. Keep in the home folder and start training
      - `cd ~`
-     - `./sbatch/run.sh -p train_transformer_elisee.py`. Here you can optionally specifiy few arguments. `-m 16Gb` for memory (by default `8Gb`). `-t hh:mm:ss` for how long to run (by default 1H). `-p /train_xxx.py` for the file to execute (by default it will run train.py).
-1. Useful slurm commands:
+     - `./sbatch/run.sh -p train_transformer_elisee.py`. Here you can optionally specifiy few arguments. `-m 16Gb` for memory (by default `8Gb`). `-t hh:mm:ss` for how long to run (by default 1H). `-p /train_xxx.py` for the file to execute (by default it will run train.py). `-c 1` for the number of cpu to use. `g 1` for the number of gpu to use.
+2. Useful slurm commands:
      - squeue -u username : will show the current job being submitted
      - scontrol show job jobid : show details about the job
      - scancel jobid : cancels a job
