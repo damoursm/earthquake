@@ -31,9 +31,9 @@ if [ -z "$time" ]
 then
     # The last 3 arguments are the sbatch script and the path to the code and python file to execute 
     sbatch --mem=$memory --output=$output_file --error=$error_file $sbatch_executable_file $code_folder $data_folder $python_file
-    echo "Scheduled $python_file to run with $memory memory"
+    echo "Scheduled $python_file to run with $memory memory. See output in $output_file"
 else
     # The last 3 arguments are the sbatch script and the path to the code and python file to execute 
     sbatch --mem=$memory --time=$time --output=$output_file --error=$error_file $sbatch_executable_file $code_folder $data_folder $python_file
-    echo "Scheduled $python_file to run with $memory memory for $time long"
+    echo "Scheduled $python_file to run with $memory memory for $time long. See output in $output_file"
 fi
