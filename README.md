@@ -39,7 +39,8 @@ You want to downlaod in parallel for STEAD:
 1. Keep in the home folder and start training
      - `cd ~`
      - `./sbatch/run.sh -p train_transformer_elisee.py`. Here you can optionally specifiy few arguments. `-m 16Gb` for memory (by default `8Gb`). `-t hh:mm:ss` for how long to run (by default 1H). `-p /train_xxx.py` for the file to execute (by default it will run train.py). `-c 1` for the number of cpu to use. `g 1` for the number of gpu to use.
-2. Useful slurm commands:
+1. Once training is done, the files will be in the `FINAL_OUTPUT_DIR` specified in the `.env`. To download them 1 by 1 on your local computer, use this command line: `scp <username>@ift6759.calculquebec.cloud:/scratch/<username>/output/default-train/<filename> <local path e.g /Users/ekabore/Downloads>`
+1. Useful slurm commands:
      - squeue -u username : will show the current job being submitted
      - scontrol show job jobid : show details about the job
      - scancel jobid : cancels a job
