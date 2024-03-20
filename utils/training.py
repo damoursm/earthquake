@@ -1,37 +1,31 @@
-from config import MODEL
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import roc_auc_score
+
+from config import features_list
 
 
-def train_validate(hyperparams):
-    if MODEL == 'tranformer':
-        train_transformer()
+def train_validate(hyperparams, train_data, test_data):
+    if hyperparams['name'] == 'Random Forest':
+        model = train_rf(hyperparams, train_data)
+
+    metric = validate(model, test_data, hyperparams['metric'])
+    return metric
 
 
-# Yasmina
-def train_transformer(hyperparams):
-    pass
+def train_rf(hyperparams, train_data):
+    X_train, y_train = train_data[features_list], train_data['source']
+    clf = RandomForestClassifier(
+        n_estimators=hyperparams['n_estimators'],
+        random_state=42,
+        n_jobs=-1,
+    )
+    clf.fit(X_train, y_train)
+    return clf
 
 
+def validate(model, test_data, metric_nm):
+    preds = model.predict(test_data[features_list])
+    if metric_nm == 'auc':
+        metric_value = roc_auc_score(test_data['source'], preds)
 
-# Elisee
-def train_nn1(hyperparams):
-    pass
-
-
-
-# Yannick
-def train_nn2(hyperparams):
-    pass
-
-
-
-# Philippe
-def train_nn3(hyperparams):
-    pass
-
-
-
-
-
-
-def test(hyperparams):
-    pass
+    return metric_value

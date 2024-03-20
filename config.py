@@ -51,16 +51,18 @@ FEATURES = {
         # 'station_distance_to_nearest_active_fault_km': feat_eng_num_minmax,
         # 'station_distance_to_nearest_active_volcano_km': feat_eng_num_minmax,
     },
-    'categorical': {
-        'station_network_code': 'ohe',
-        'station_code': 'ohe',
-        'station_channels': 'ohe',
-        'station_vs_30_detail': 'ohe',
-        'trace_start_time': 'ohe',
-        'grid_cell': 'ohe',
-        # 'station_country': 'ohe',
+    'categorical': {  # TODO add categorical features by doing one hot encoding
+        # 'station_network_code': 'ohe',
+        # 'station_code': 'ohe',
+        # 'station_channels': 'ohe',
+        # 'station_vs_30_detail': 'ohe',
+        # 'trace_start_time': 'ohe',
+        # 'grid_cell': 'ohe',
+        # # 'station_country': 'ohe',
     }
 }
+
+features_list = list(FEATURES['numerical'].keys()) + list(FEATURES['categorical'].keys())
 
 FEATURES_SCALING = {
     'name': 'MinMaxScaler',
@@ -69,36 +71,17 @@ FEATURES_SCALING = {
 # FEATURES_SCALING = {
 #     'name': 'StandardScaler',
 # }
-FEATURES_IMPORTANCE = []
-MODEL = 'model_name'
-
-HYPERPARAMETERS = [
-    skopt.space.Real(10, 70, name='t_score_feats_filter'),
-    skopt.space.Categorical([70], name='t_score_feats_filter'),
-]
 
 NB_ITER = 10
-
 METRIC_EVAL = 'AUC'
 
-MODEL = 'Neural Network'
-MODEL = 'Random Forest'
-
-MODEL = (
-    'tranformer',
-    {
-    'hp1': 1.9,
-    'hp2': 1.9,
-    'hp3': 1.9,
-    }
-)
-
-MODEL = {
-    'model_name': 'tranformer',
-    'hyperparmas': {
-        'hp1': 1.9,
-        'hp2': 1.9,
-        'hp3': 1.9,
-    }
-}
-
+HYPERPARAMETERS = [
+    skopt.space.Categorical(['Random Forest'], name='name'),
+    skopt.space.Integer(100, 1000, name='n_estimators'),
+    skopt.space.Integer(10, 100, name='max_depth'),
+    skopt.space.Integer(2, 10, name='min_samples_leaf'),
+    skopt.space.Integer(1, 10, name='max_leaf_nodes'),
+    skopt.space.Categorical(['auto'], name='max_features'),
+    skopt.space.Categorical([True], name='bootstrap'),
+    skopt.space.Categorical(['auc'], name='metric'),
+]

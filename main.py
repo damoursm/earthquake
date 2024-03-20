@@ -11,7 +11,6 @@ from utils.dataloaders.InstanceDataset import InstanceDataset
 from config import \
     FEATURES, \
     HYPERPARAMETERS, \
-    MODEL, \
     INSTANCE_EVENTS_FILENAME, \
     INSTANCE_NOISE_FILENAME, \
     INSTANCE_EVENTS_METADATA_FILENAME, \
@@ -35,6 +34,9 @@ def main():
     # Load metadata CSVs
     df_events_meta = pd.read_csv(INSTANCE_EVENTS_METADATA_FILENAME, index_col='trace_name')
     df_noise_meta = pd.read_csv(INSTANCE_NOISE_METADATA_FILENAME, index_col='trace_name')
+    df_noise_meta['source'] = [0] * len(df_noise_meta)
+    df_events_meta['source'] = [1] * len(df_events_meta)
+
     df_events_meta = df_events_meta[df_noise_meta.columns]
     df_meta = pd.concat([df_events_meta, df_noise_meta])
     df_meta = df_meta.dropna(axis=1, how='all')
@@ -55,11 +57,15 @@ def main():
     # Signals
 
     # Scaling
-    df_meta, train_scaler, outliers_scaler = scale(
+    df_meta_scaled, train_scaler, outliers_scaler = scale(
         df_meta,
         FEATURES['numerical'].keys(),
         scaling_params=FEATURES_SCALING,
     )
+    df_meta_scaled['source'] = df_meta['source']
+    df_train = df_meta_scaled.sample(frac=0.8, random_state=42)
+    df_test = df_meta_scaled.drop(df_train.index)
+
 
     # # features scaling
     # min_max_scaler = MinMaxScaler()
@@ -78,7 +84,7 @@ def main():
     @skopt.utils.use_named_args(HYPERPARAMETERS)
     def objective(**hyperparams):
         # ---------------------- Philippe ----------------------
-        metrc_eval, run_id = train_validate(hyperparams)
+        metrc_eval = train_validate(hyperparams, df_train, df_test)
         # -------------------- Philippe END --------------------
         return -1.0 * metrc_eval  # Maximize
         # return loss  # Minimize
@@ -89,8 +95,8 @@ def main():
 
     # ---------------------- Philippe ----------------------
     # Scale test
-    test_data = scale(scaler=train_scaler)
-    test(test_data, best_hyperparams)
+    # test_data = scale(scaler=train_scaler)
+    # test(test_data, best_hyperparams)
     # -------------------- Philippe END --------------------
 
     # Push results to MLflow
