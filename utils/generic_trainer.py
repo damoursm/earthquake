@@ -25,7 +25,7 @@ def train_detection_only(train_set, val_set, model, loss, correct_count, batch_s
         learning_rate: initial learning rate for optimizer
 
 
-    returns errors: {"train": [], "val": []}, accuracy: {"train": [], "val": []}, monitor: GPUMonitor
+    returns errors: {"train": [], "val": []}, accuracy: {"train": [], "val": []}, best_model_path: str, monitor: GPUMonitor
     """
 
     # create device based on GPU availability
@@ -167,7 +167,7 @@ def train_detection_only(train_set, val_set, model, loss, correct_count, batch_s
 
 
 
-def train_detection_and_phase(train_set, val_set, model, detection_loss, phase_loss, total_loss, detection_correct_count, phase_correct_count, total_correct_count, batch_size=128, epochs=10, learning_rate=0.01):
+def train_detection_and_phase(train_set, val_set, model, detection_loss, phase_loss, total_loss, detection_correct_count, phase_correct_count, total_correct_count, batch_size=64, epochs=20, learning_rate=0.001):
     """
     Train a model and return accuracy and errors over the number of epochs for event, p phase and s phase detection
     
