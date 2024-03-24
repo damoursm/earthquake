@@ -1,7 +1,7 @@
 from dotenv import dotenv_values
 import os
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, accuracy_score, f1_score, precision_score, recall_score
 import shutil
 from torch import nn
 from dotenv import dotenv_values
@@ -18,12 +18,14 @@ from utils.plot import plot_error_and_accuracy
 
 def train_validate(hyperparams, train_data, test_data):
     if hyperparams['name'] == 'Random Forest':
-        model = train_rf(hyperparams, train_data)
-        metric = validate(model, test_data, hyperparams['metric'])
-    elif hyperparams['name'] == 'cnn_elisee':
-        metric = train_cnn(hyperparams)
+        model, artifacts = train_rf(hyperparams, train_data)
+        metrics, artifacts_ = validate(model, test_data, hyperparams['metric'])
+        artifacts += artifacts_
 
-    return metric
+    elif hyperparams['name'] == 'cnn_elisee':
+        model, metrics, artifacts = train_cnn(hyperparams)
+
+    return model, metrics, artifacts
 
 
 def train_rf(hyperparams, train_data):
@@ -34,7 +36,7 @@ def train_rf(hyperparams, train_data):
         n_jobs=-1,
     )
     clf.fit(X_train, y_train)
-    return clf
+    return clf, []
 
 
 def train_cnn(hyperparams):
@@ -89,7 +91,7 @@ def train_cnn(hyperparams):
 
     loss = nn.CrossEntropyLoss()
 
-    e, a, model_path, best_val_accuracy, monitor = train_detection_only(
+    e, a, best_model_path, best_val_accuracy, monitor = train_detection_only(
         train_dataset,
         val_dataset,
         model,
@@ -101,18 +103,27 @@ def train_cnn(hyperparams):
     )
 
     plot_error_and_accuracy(e, a, final_output_dir)
-    shutil.copy(model_path, final_output_dir)
+    shutil.copy(best_model_path, final_output_dir)
     monitor.save_plots(final_output_dir)
 
-    return best_val_accuracy
+    return best_model_path, {'metric_eval': best_val_accuracy}, []
 
 
 def validate(model, test_data, metric_nm):
+    metrics = {}
     preds = model.predict(test_data[features_list])
     if metric_nm == 'auc':
-        metric_value = roc_auc_score(test_data['source'], preds)
+        metrics['metric_eval'] = roc_auc_score(test_data['source'], preds)
+    metrics['auc'] = roc_auc_score(test_data['source'], preds)
+    metrics['accuracy'] = accuracy_score(test_data['source'], preds)
+    metrics['f1'] = f1_score(test_data['source'], preds)
+    metrics['precision'] = precision_score(test_data['source'], preds)
+    metrics['recall'] = recall_score(test_data['source'], preds)
 
-    return metric_value
+    # file_path = os.path.join('mlruns', self.exp_id, 'output/figures/Training_report.png')
+    artifacts = []
+
+    return metrics, artifacts
 
 
 def test(model, test_data, metric_nm):

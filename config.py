@@ -75,6 +75,15 @@ FEATURES_SCALING = {
 NB_ITER = 10
 METRIC_EVAL = 'AUC'
 
+# TODO rajouter hyperparametres dept et width pour CNN
+HYPERPARAMETERS = [
+    skopt.space.Categorical(['cnn_elisee'], name='name'),
+    skopt.space.Real(0, 0.9, name='dropout'),
+    skopt.space.Integer(2, 3, name='epochs'),
+    skopt.space.Categorical([32, 64, 128], name='batch_size'),
+    skopt.space.Categorical(['accuracy'], name='metric'),
+]
+
 HYPERPARAMETERS = [
     skopt.space.Categorical(['Random Forest'], name='name'),
     skopt.space.Integer(100, 1000, name='n_estimators'),
@@ -84,13 +93,4 @@ HYPERPARAMETERS = [
     skopt.space.Categorical(['auto'], name='max_features'),
     skopt.space.Categorical([True], name='bootstrap'),
     skopt.space.Categorical(['auc'], name='metric'),
-]
-
-# TODO rajouter hyperparametres dept et width pour CNN
-HYPERPARAMETERS = [
-    skopt.space.Categorical(['cnn_elisee'], name='name'),
-    skopt.space.Real(0, 0.9, name='dropout'),
-    skopt.space.Integer(2, 3, name='epochs'),
-    skopt.space.Categorical([32, 64, 128], name='batch_size'),
-    skopt.space.Categorical(['accuracy'], name='metric'),
 ]
