@@ -24,7 +24,7 @@ def main():
 
     final_output_dir = env_values["FINAL_OUTPUT_DIR"]
 
-    split_percentage = [0.8, 0.1, 0.1]
+    split_percentage=[0.85, 0.05, 0.10]
 
     print("############################ Data set ############################")
 
@@ -33,9 +33,9 @@ def main():
     print(f"Noise hdf5 file: {noise_hdf5_file}")
     print(f"Noise metadata file: {noise_metadata_file}")
 
-    train_dataset = EventDetectionInstanceDataset(event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, "binary", split_index=0, split_percentage=split_percentage, padding_type="sample", start_padding_value=100, end_padding_value=100)
-    val_dataset = EventDetectionInstanceDataset(event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, "binary", split_index=1, split_percentage=split_percentage, padding_type="sample", start_padding_value=100, end_padding_value=10)
-    test_dataset = EventDetectionInstanceDataset(event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, "binary", split_index=2, split_percentage=split_percentage, padding_type="sample", start_padding_value=100, end_padding_value=10)
+    train_dataset = EventDetectionInstanceDataset(event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, "binary", split_index=0, split_percentage=split_percentage, padding_type="sample", padding_value=100)
+    val_dataset = EventDetectionInstanceDataset(event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, "binary", split_index=1, split_percentage=split_percentage, padding_type="sample", padding_value=100)
+    test_dataset = EventDetectionInstanceDataset(event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, "binary", split_index=2, split_percentage=split_percentage, padding_type="sample", padding_value=100)
 
     print(f"Dataset size: Train={len(train_dataset)} - Val={len(val_dataset)} - Test={len(test_dataset)}")
 
@@ -67,9 +67,7 @@ def main():
 
     loss = nn.CrossEntropyLoss()
 
-    e, a, model_path, best_val_accuracy, monitor = train_detection_only(
-        train_dataset, val_dataset, model, loss, correct, batch_size=64, epochs=20, temp_dir=temp_dir
-    )
+    e, a, model_path, monitor = train_detection_only(train_dataset, val_dataset, model, loss, correct, batch_size=64, epochs=2, temp_dir=temp_dir)
 
     plot_error_and_accuracy(e, a, final_output_dir)
     shutil.copy(model_path, final_output_dir)
