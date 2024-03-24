@@ -24,7 +24,7 @@ def main():
 
     final_output_dir = env_values["FINAL_OUTPUT_DIR"]
 
-    split_percentage=[0.0001, 0.0001, 0.9998]
+    split_percentage = [0.8, 0.1, 0.1]
 
     print("############################ Data set ############################")
 
@@ -67,7 +67,9 @@ def main():
 
     loss = nn.CrossEntropyLoss()
 
-    e, a, model_path, monitor = train_detection_only(train_dataset, val_dataset, model, loss, correct, batch_size=64, epochs=2, temp_dir=temp_dir)
+    e, a, model_path, best_val_accuracy, monitor = train_detection_only(
+        train_dataset, val_dataset, model, loss, correct, batch_size=64, epochs=20, temp_dir=temp_dir
+    )
 
     plot_error_and_accuracy(e, a, final_output_dir)
     shutil.copy(model_path, final_output_dir)

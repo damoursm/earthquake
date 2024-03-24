@@ -83,12 +83,11 @@ def main():
     # Hyperparams Tuning
     @skopt.utils.use_named_args(HYPERPARAMETERS)
     def objective(**hyperparams):
-        # ---------------------- Philippe ----------------------
         metrc_eval = train_validate(hyperparams, df_train, df_test)
-        # -------------------- Philippe END --------------------
-        return -1.0 * metrc_eval  # Maximize
-        # return loss  # Minimize
-        # return rmse  # Minimize
+        if hyperparams['metric'] in ['auc', 'accuracy', 'f1', 'precision', 'recall']:
+            return -1.0 * metrc_eval
+        elif hyperparams['metric'] in ['log_loss', 'loss', 'mse', 'mae', 'rmse']:
+            return metrc_eval
 
     results = skopt.gp_minimize(objective, dimensions=HYPERPARAMETERS, n_calls=NB_ITER)
     best_hyperparams = results.x

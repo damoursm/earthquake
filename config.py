@@ -85,3 +85,12 @@ HYPERPARAMETERS = [
     skopt.space.Categorical([True], name='bootstrap'),
     skopt.space.Categorical(['auc'], name='metric'),
 ]
+
+# TODO rajouter hyperparametres dept et width pour CNN
+HYPERPARAMETERS = [
+    skopt.space.Categorical(['cnn_elisee'], name='name'),
+    skopt.space.Real(0, 0.9, name='dropout'),
+    skopt.space.Integer(2, 3, name='epochs'),
+    skopt.space.Categorical([32, 64, 128], name='batch_size'),
+    skopt.space.Categorical(['accuracy'], name='metric'),
+]

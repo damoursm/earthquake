@@ -163,7 +163,7 @@ def train_detection_only(train_set, val_set, model, loss, correct_count, batch_s
     monitor.stop()
 
     # return metric
-    return errors, accuracies, best_model_path, monitor
+    return errors, accuracies, best_model_path, best_val_accuracy, monitor
 
 
 
