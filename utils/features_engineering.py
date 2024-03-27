@@ -174,3 +174,16 @@ def scale(data, features, scaling_params, scaler=None, outliers_limit=False, out
         scaled_data[col] = data[col]
 
     return scaled_data, new_scaler, outliers_scaler
+
+
+def data_enrich(df_meta):
+    # Make feature lat-long grid
+    lat_min = df_meta['station_latitude_deg'].min()
+    lon_min = df_meta['station_longitude_deg'].min()
+    df_meta['grid_cell'] = df_meta.apply(
+        lambda x: assign_to_grid(x['station_latitude_deg'], x['station_longitude_deg'], lat_min, lon_min),
+        axis=1
+    )
+    # Other data enrich...
+
+    return df_meta

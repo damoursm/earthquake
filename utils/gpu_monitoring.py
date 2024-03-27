@@ -93,17 +93,19 @@ class GPUMonitor:
 
     def save_plots(self, save_figs, title="GPU monitoring", figsize=(10, 10)):
         fig, axs = plt.subplots(2, 2, figsize=figsize)
-        for i in range(2):
-            for j in range(2):
-                ax = axs[i][j]
-                k = list(self.utilization.keys())[i * 2 + j]
-                data = self.utilization[k]
-                ax.plot(range(len(data)), data)
-                ax.title.set_text(k)
-        plt.suptitle(title)
+        if self.utilization:  # if trained on GPU self.utilization will not be None
+            for i in range(2):
+                for j in range(2):
+                    ax = axs[i][j]
+                    k = list(self.utilization.keys())[i * 2 + j]
+                    data = self.utilization[k]
+                    ax.plot(range(len(data)), data)
+                    ax.title.set_text(k)
+            plt.suptitle(title)
 
-        fig.tight_layout()
-        fig.savefig(os.path.join(save_figs, str(title).replace(' ', '-')+'.png')) 
+            fig.tight_layout()
+            fig.savefig(os.path.join(save_figs, str(title).replace(' ', '-')+'.png'))
 
-        plt.close(fig)
-        plt.clf()
+            plt.close(fig)
+            plt.clf()
+

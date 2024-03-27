@@ -10,7 +10,7 @@ class InstanceDataset(Dataset):
     Raw Instance dataset.
     Load events and noise from file and returns the 3 C waveforms, wether there is a earthquake or not, p phase and s phase
     """
-    def __init__(self, event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, target_type="box_square", padding_type="sample", padding_value=280, target_phase=True, phase_padding=20, remove_empty_phase=True, transform=None, split_index=0, split_percentage=[0.8, 0.15, 0.5]):
+    def __init__(self, event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, target_type="box_square", padding_type="sample", start_padding_value=280, end_padding_value=280, target_phase=True, phase_padding=20, remove_empty_phase=True, transform=None, split_index=0, split_percentage=[0.8, 0.15, 0.5]):
         self.event_hdf5_file = event_hdf5_file
         self.noise_hdf5_file = noise_hdf5_file
         self.noise_metadata = pd.read_csv(noise_metadata_file)
@@ -22,7 +22,8 @@ class InstanceDataset(Dataset):
         self.transform = transform
         self.target_type = target_type
         self.padding_type = padding_type
-        self.padding_value = padding_value
+        self.start_padding_value = start_padding_value
+        self.end_padding_value = end_padding_value
         self.target_phase = target_phase
         self.phase_padding = phase_padding
 
@@ -57,7 +58,7 @@ class InstanceDataset(Dataset):
             filename = self.event_hdf5_file
             with h5py.File(filename, 'r') as f:
                 input = torch.FloatTensor(f['data'][trace_name][:])
-            target, p_target, s_target = self.get_event_target(input, index, self.event_metadata, self.target_type, self.padding_type, self.padding_value, self.target_phase, self.phase_padding)
+            target, p_target, s_target = self.get_event_target(input, index, self.event_metadata, self.target_type, self.padding_type, self.start_padding_value, self.end_padding_value, self.target_phase, self.phase_padding)
         else:
             #Access noise
             index = (idx % self.events_size) + self.noise_start_index
@@ -72,7 +73,7 @@ class InstanceDataset(Dataset):
         return input, target, p_target, s_target, trace_name
 
 
-    def get_event_target(self, input, index, event_metadata, target_type, padding_type, padding_value, target_phase, phase_padding):
+    def get_event_target(self, input, index, event_metadata, target_type, padding_type, start_padding_value, end_padding_value, target_phase, phase_padding):
         s_target = -1
         p_target = -1
         
@@ -94,7 +95,7 @@ class InstanceDataset(Dataset):
             target = torch.zeros(sample_size)
             target[p_sample:s_sample+1] = torch.ones(s_sample - p_sample + 1)
 
-            raw_start_index, raw_end_index = self.get_raw_padding_index(p_sample, s_sample, padding_type, padding_value)
+            raw_start_index, raw_end_index = self.get_raw_padding_index(p_sample, s_sample, padding_type, start_padding_value, end_padding_value)
 
             if target_type == "box_square":
                 final_start_index, start_padding, final_end_index, end_padding = self.get_box_square_padding(sample_size, raw_start_index, raw_end_index, p_sample, s_sample)
@@ -191,13 +192,15 @@ class InstanceDataset(Dataset):
         return final_start_index, start_padding, final_end_index, end_padding
 
         
-    def get_raw_padding_index(self, p_sample, s_sample, padding_type, padding_value):
+    def get_raw_padding_index(self, p_sample, s_sample, padding_type, start_padding_value, end_padding_value):
         """
         Returns the start and end index of where detection padding should start
         """
         if padding_type == "percentage":
-            padding_value = round(padding_value * (s_sample - p_sample))
-        return (p_sample - padding_value), (s_sample + padding_value)
+            start_padding_value = round(start_padding_value * (s_sample - p_sample))
+            end_padding_value = round(end_padding_value * (s_sample - p_sample))
+            
+        return (p_sample - start_padding_value), (s_sample + end_padding_value)
 
         
 
