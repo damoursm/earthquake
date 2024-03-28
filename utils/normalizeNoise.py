@@ -134,8 +134,8 @@ def merge_csv_files(file1_path, file2_path, merged_file_path):
 merge_csv_files("Metadata.csv", "test.csv", "mergetest.csv")
 """
 # Define your variables
-earthquake = 'C:/Users/alain/Bureau/Projet Yan/earthquake-main/Data/events_counts.hdf5'
-noise = 'C:/Users/alain/Bureau/Projet Yan/earthquake-main/Data/Instance_noise.hdf5'
+earthquake = 'PATH VERS LE HDF5 DE EARTHQUAKE'
+noise = 'PATH VERS LE HDF5 DE NOISE'
 debutTemps = 0
 finTemps = 12000
 chunkSize = 36000
