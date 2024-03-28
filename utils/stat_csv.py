@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import h5py
 
 
-def merge_csv_correl(noiseCSV, earthquakeCSV, output_file):
+def edit_csv_correl(noiseCSV, earthquakeCSV, output_file):
     df1 = pd.read_csv(noiseCSV)
     df2 = pd.read_csv(earthquakeCSV)
     df1['source'] = 0
@@ -18,7 +18,7 @@ def merge_csv_correl(noiseCSV, earthquakeCSV, output_file):
     merged_df = pd.concat([df1, df2], axis=0)
     merged_df.reset_index(drop=True, inplace=True)
     merged_df.to_csv(output_file, index=False)
-#merge_csv_correl("path1", "path2", "path3") Il faut mettre les path vers les fichiers
+#edit_csv_correl("path1", "path2", "path3") Il faut mettre les path vers les fichiers
 
 
 def matrixCorrelation(df):
@@ -80,5 +80,13 @@ def calculate_stats(noise_data):
     stats["lquartile_Z"] = np.percentile(noise_data[0], 25) #lower quartile
     stats["uquartile_Z"] = np.percentile(noise_data[0], 75) #upper quartile
     return stats
-
+"""            
+#Merger des csv
+def merge_csv_files(file1_path, file2_path, merged_file_path):
+    df1 = pd.read_csv(file1_path)
+    df2 = pd.read_csv(file2_path)
+    merged_df = pd.concat([df1, df2], axis=1)
+    merged_df.to_csv(merged_file_path, index=False)
+merge_csv_files("Metadata.csv", "test.csv", "mergetest.csv")
+"""
 stat_hdf5('test.hdf5', 'test.csv')
