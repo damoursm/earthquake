@@ -97,7 +97,7 @@ def make_shap(train_data, model, features, verbose=False):
     return imp_features
 
 
-def assign_to_grid(lat, lon, lat_min, lon_min, grid_size=0.5):
+def assign_to_grid(lat, lon, lat_min, lon_min, grid_size=1):
     lat_idx = int((lat - lat_min) / grid_size)
     lon_idx = int((lon - lon_min) / grid_size)
     return (lat_idx, lon_idx)
@@ -147,9 +147,6 @@ def scale(data, features, scaling_params, scaler=None, outliers_limit=False, out
 
     if scaler:  # Use the provided scaler
         new_scaler = False
-        # print(scaler.data_min)
-        # print(scaler.data_max)
-        # scaler.fit(data)
         scaled = scaler.transform(data[feats])
     else:  # Create new scaler
         if scaling_params['name'] == 'MinMaxScaler':
@@ -159,13 +156,6 @@ def scale(data, features, scaling_params, scaler=None, outliers_limit=False, out
         elif scaling_params['name'] == 'StandardScaler':
             new_scaler = StandardScaler().fit(data[features])
             scaled = new_scaler.transform(data[features])
-            # scaled = new_scaler.fit_transform(data[features])
-
-    # # Integer encode direction (pour si on doit encoder des string)
-    # encoder = LabelEncoder()
-    # values[:, 4] = encoder.fit_transform(values[:, 4])
-    # # ensure all data is float
-    # values = values.astype('float32')
 
     scaled_data = pd.DataFrame(scaled, index=data.index, columns=feats)
     scaled_data = scaled_data[features]
@@ -180,10 +170,13 @@ def data_enrich(df_meta):
     # Make feature lat-long grid
     lat_min = df_meta['station_latitude_deg'].min()
     lon_min = df_meta['station_longitude_deg'].min()
-    df_meta['grid_cell'] = df_meta.apply(
+    df_meta['station_grid_cell'] = df_meta.apply(
         lambda x: assign_to_grid(x['station_latitude_deg'], x['station_longitude_deg'], lat_min, lon_min),
         axis=1
     )
+    ohe_df = pd.get_dummies(df_meta['station_grid_cell'])
+
     # Other data enrich...
 
-    return df_meta
+
+    return df_meta, ohe_df

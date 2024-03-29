@@ -46,6 +46,34 @@ FEATURES = {
         'trace_EQT_number_detections': feat_eng_num_minmax,
         'trace_EQT_P_number': feat_eng_num_minmax,
         'trace_EQT_S_number': feat_eng_num_minmax,
+        # (0, 5): feat_eng_num_minmax,
+        # (0, 7): feat_eng_num_minmax,
+        # (1, 6): feat_eng_num_minmax,
+        # (1, 7): feat_eng_num_minmax,
+        # (1, 8): feat_eng_num_minmax,
+        # (2, 5): feat_eng_num_minmax,
+        # (2, 6): feat_eng_num_minmax,
+        # (2, 7): feat_eng_num_minmax,
+        # (2, 8): feat_eng_num_minmax,
+        # (2, 9): feat_eng_num_minmax,
+        # (2, 15): feat_eng_num_minmax,
+        # (3, 2): feat_eng_num_minmax,
+        # (3, 6): feat_eng_num_minmax,
+        # (3, 7): feat_eng_num_minmax,
+        # (3, 8): feat_eng_num_minmax,
+        # (3, 9): feat_eng_num_minmax,
+        #
+        # (3, 10): feat_eng_num_minmax,
+        # (4, 8): feat_eng_num_minmax,
+        # (4, 9): feat_eng_num_minmax,
+        # (4, 11): feat_eng_num_minmax,
+        # (4, 12), (4, 13), (4, 15),  (5, 2),
+        # (5, 6),  (5, 7),  (5, 8),  (5, 9), (5, 10), (5, 11), (5, 13), (5, 14),
+        # (6, 4),  (6, 5),  (6, 6),  (6, 7),  (6, 8),  (6, 9), (6, 12),  (7, 3),
+        # (7, 4),  (7, 5),  (7, 6),  (7, 7),  (8, 0),  (8, 1),  (8, 2),  (8, 3),
+        # (8, 4),  (8, 5),  (8, 6),  (9, 0),  (9, 1),  (9, 2),  (9, 3),  (9, 4),
+        # (9, 5), (9, 10), (10, 0), (10, 2), (10, 3), (10, 4), (10, 5), (10, 6),
+        # (10, 7), (11, 3), (11, 4), (11, 5), (11, 6)
         # 'station_distance_to_coast_km': feat_eng_num_minmax,
         # 'station_distance_to_nearest_tectonic_plate_boundary_km': feat_eng_num_minmax,
         # 'station_distance_to_nearest_active_fault_km': feat_eng_num_minmax,
@@ -57,12 +85,12 @@ FEATURES = {
         # 'station_channels': 'ohe',
         # 'station_vs_30_detail': 'ohe',
         # 'trace_start_time': 'ohe',
-        # 'grid_cell': 'ohe',
+        'station_grid_cell': 'ohe',
         # # 'station_country': 'ohe',
     }
 }
 
-features_list = list(FEATURES['numerical'].keys()) + list(FEATURES['categorical'].keys())
+features_list = list(FEATURES['numerical'].keys())
 
 FEATURES_SCALING = {
     'name': 'MinMaxScaler',

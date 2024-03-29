@@ -64,7 +64,7 @@ class MLflowExperiment():
         df_meta = df_meta.dropna(axis=1, how='all')
 
         # Data Enrich
-        df_meta = data_enrich(df_meta)
+        df_meta, ohe_df = data_enrich(df_meta)
 
         # Scaling between 0 and 1
         # Metadata
@@ -78,6 +78,9 @@ class MLflowExperiment():
             FEATURES['numerical'].keys(),
             scaling_params=FEATURES_SCALING,
         )
+        df_meta_scaled = pd.concat([df_meta_scaled, ohe_df], axis=1)
+        global features_list
+        features_list = list(df_meta_scaled.columns)
         df_meta_scaled['source'] = df_meta['source']
 
         # Split the dataset
