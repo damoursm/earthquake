@@ -55,8 +55,9 @@ def process_data(data_set, debut_point, max_point, chunk_size, target_snr, nombr
             end = min(start + chunk_size, rows)
             chunk = data_set[start:end, debut_point:max_point]
             chunk = normalize_signal(chunk)
-            adjusted_chunk = adjust_noise_level(chunk, target_snr)
-            noise_data[start:end, :] = adjusted_chunk
+            adjusted_chunk = adjust_noise_level(chunk, target_snr) # LIGNE QUI SERT A AJOUTER DU NOISE
+            noise_data[start:end, :] = adjusted_chunk # POUR NE PAS AVOIR DE NOISE CHANGER ajusted_chunk ---> chunk
+                                                      # Et mettre la ligne au dessus en commentaire
     return noise_data
 """
 Le code pour calculer les stats est dans un fichier stats_csv.py 
@@ -133,17 +134,17 @@ def merge_csv_files(file1_path, file2_path, merged_file_path):
     merged_df.to_csv(merged_file_path, index=False)
 merge_csv_files("Metadata.csv", "test.csv", "mergetest.csv")
 """
-# Define your variables
+# VARIABLES
 earthquake = 'PATH VERS LE HDF5 DE EARTHQUAKE'
 noise = 'PATH VERS LE HDF5 DE NOISE'
-debutTemps = 0
-finTemps = 12000
-chunkSize = 36000
-sampleSize = 1000
-nom_fichier_output = "test.hdf5"
-target_SNR = 5
-nombre_noise = 1
-hdf_target = noise
+debutTemps = 0                           #Premier element x du signal pris 
+finTemps = 12000                         # Dernier element x du signal pris
+chunkSize = 36000                        #Loader en chunk 
+sampleSize = 1000                        #Nombre de signaux voulus
+nom_fichier_output = "test.hdf5"        #Nom du fichier HDF5 qui est output
+target_SNR = 5                            #Quantite de noise
+nombre_noise = 1                        #Nombre de noise a generer
+hdf_target = noise                      #Si le fichier est un noise ou Earthquake
 
 #hdf5_creation(hdf_target, debutTemps, finTemps, chunkSize, sampleSize, target_SNR)
 
