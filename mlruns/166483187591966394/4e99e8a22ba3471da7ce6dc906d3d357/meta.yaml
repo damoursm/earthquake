@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/166483187591966394/4e99e8a22ba3471da7ce6dc906d3d357/artifacts
+end_time: 1711736463572
+entry_point_name: ''
+experiment_id: '166483187591966394'
+lifecycle_stage: active
+run_id: 4e99e8a22ba3471da7ce6dc906d3d357
+run_name: fearless-sow-963
+run_uuid: 4e99e8a22ba3471da7ce6dc906d3d357
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711736463438
+status: 3
+tags: []
+user_id: Math

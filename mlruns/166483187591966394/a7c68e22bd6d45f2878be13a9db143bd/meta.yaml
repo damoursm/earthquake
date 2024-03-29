@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/166483187591966394/a7c68e22bd6d45f2878be13a9db143bd/artifacts
+end_time: 1711736469259
+entry_point_name: ''
+experiment_id: '166483187591966394'
+lifecycle_stage: active
+run_id: a7c68e22bd6d45f2878be13a9db143bd
+run_name: sincere-steed-931
+run_uuid: a7c68e22bd6d45f2878be13a9db143bd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711736469129
+status: 3
+tags: []
+user_id: Math

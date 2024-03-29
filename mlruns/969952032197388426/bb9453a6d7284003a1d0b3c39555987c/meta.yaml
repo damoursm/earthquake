@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/969952032197388426/bb9453a6d7284003a1d0b3c39555987c/artifacts
+end_time: 1711735735120
+entry_point_name: ''
+experiment_id: '969952032197388426'
+lifecycle_stage: active
+run_id: bb9453a6d7284003a1d0b3c39555987c
+run_name: luxuriant-stag-748
+run_uuid: bb9453a6d7284003a1d0b3c39555987c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735734839
+status: 3
+tags: []
+user_id: Math

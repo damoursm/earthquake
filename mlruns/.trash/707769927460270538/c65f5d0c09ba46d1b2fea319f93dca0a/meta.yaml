@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/707769927460270538/c65f5d0c09ba46d1b2fea319f93dca0a/artifacts
+deleted_time: 1711255459608
+end_time: 1711255251167
+entry_point_name: ''
+experiment_id: '707769927460270538'
+lifecycle_stage: deleted
+run_id: c65f5d0c09ba46d1b2fea319f93dca0a
+run_name: peaceful-stoat-497
+run_uuid: c65f5d0c09ba46d1b2fea319f93dca0a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711255251005
+status: 3
+tags: []
+user_id: Math

@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/707769927460270538/84c5b10742de4699b1160a26e44cae82/artifacts
+deleted_time: 1711255459608
+end_time: 1711255221049
+entry_point_name: ''
+experiment_id: '707769927460270538'
+lifecycle_stage: deleted
+run_id: 84c5b10742de4699b1160a26e44cae82
+run_name: welcoming-koi-628
+run_uuid: 84c5b10742de4699b1160a26e44cae82
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711255220884
+status: 3
+tags: []
+user_id: Math

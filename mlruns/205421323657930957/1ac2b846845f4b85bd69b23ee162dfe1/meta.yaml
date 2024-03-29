@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/205421323657930957/1ac2b846845f4b85bd69b23ee162dfe1/artifacts
+end_time: 1711735702830
+entry_point_name: ''
+experiment_id: '205421323657930957'
+lifecycle_stage: active
+run_id: 1ac2b846845f4b85bd69b23ee162dfe1
+run_name: beautiful-turtle-129
+run_uuid: 1ac2b846845f4b85bd69b23ee162dfe1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735702373
+status: 3
+tags: []
+user_id: Math

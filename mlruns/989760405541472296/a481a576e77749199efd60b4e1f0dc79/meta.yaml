@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/989760405541472296/a481a576e77749199efd60b4e1f0dc79/artifacts
+end_time: 1711735948096
+entry_point_name: ''
+experiment_id: '989760405541472296'
+lifecycle_stage: active
+run_id: a481a576e77749199efd60b4e1f0dc79
+run_name: big-shark-467
+run_uuid: a481a576e77749199efd60b4e1f0dc79
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735947743
+status: 3
+tags: []
+user_id: Math

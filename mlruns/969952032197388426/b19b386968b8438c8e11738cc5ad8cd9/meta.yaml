@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/969952032197388426/b19b386968b8438c8e11738cc5ad8cd9/artifacts
+end_time: 1711735722712
+entry_point_name: ''
+experiment_id: '969952032197388426'
+lifecycle_stage: active
+run_id: b19b386968b8438c8e11738cc5ad8cd9
+run_name: legendary-sheep-515
+run_uuid: b19b386968b8438c8e11738cc5ad8cd9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735721943
+status: 3
+tags: []
+user_id: Math

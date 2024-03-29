@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/707769927460270538/92e134c3f60c4d49817805b59322584f/artifacts
+deleted_time: 1711255459608
+end_time: 1711255225595
+entry_point_name: ''
+experiment_id: '707769927460270538'
+lifecycle_stage: deleted
+run_id: 92e134c3f60c4d49817805b59322584f
+run_name: whimsical-slug-441
+run_uuid: 92e134c3f60c4d49817805b59322584f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711255225447
+status: 3
+tags: []
+user_id: Math

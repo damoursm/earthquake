@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/205421323657930957/094c12db11bf4b588cb7287cc2523b0d/artifacts
+end_time: 1711735695322
+entry_point_name: ''
+experiment_id: '205421323657930957'
+lifecycle_stage: active
+run_id: 094c12db11bf4b588cb7287cc2523b0d
+run_name: funny-tern-661
+run_uuid: 094c12db11bf4b588cb7287cc2523b0d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735695070
+status: 3
+tags: []
+user_id: Math

@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/166483187591966394/0809dd36e1f64d5e802a5d773bffcc36/artifacts
+end_time: 1711736466747
+entry_point_name: ''
+experiment_id: '166483187591966394'
+lifecycle_stage: active
+run_id: 0809dd36e1f64d5e802a5d773bffcc36
+run_name: delicate-crow-93
+run_uuid: 0809dd36e1f64d5e802a5d773bffcc36
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711736466616
+status: 3
+tags: []
+user_id: Math

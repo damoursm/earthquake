@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/231526922525234413/87409e3a405b4e16a50d8734661b0b66/artifacts
+end_time: 1711735641734
+entry_point_name: ''
+experiment_id: '231526922525234413'
+lifecycle_stage: active
+run_id: 87409e3a405b4e16a50d8734661b0b66
+run_name: abrasive-foal-280
+run_uuid: 87409e3a405b4e16a50d8734661b0b66
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735641591
+status: 3
+tags: []
+user_id: Math

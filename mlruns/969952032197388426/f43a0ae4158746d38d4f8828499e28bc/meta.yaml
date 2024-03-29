@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/969952032197388426/f43a0ae4158746d38d4f8828499e28bc/artifacts
+end_time: 1711735725559
+entry_point_name: ''
+experiment_id: '969952032197388426'
+lifecycle_stage: active
+run_id: f43a0ae4158746d38d4f8828499e28bc
+run_name: bittersweet-pig-822
+run_uuid: f43a0ae4158746d38d4f8828499e28bc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735725154
+status: 3
+tags: []
+user_id: Math

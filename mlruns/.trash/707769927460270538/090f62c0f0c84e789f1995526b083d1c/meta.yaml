@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/707769927460270538/090f62c0f0c84e789f1995526b083d1c/artifacts
+deleted_time: 1711255459608
+end_time: 1711255247591
+entry_point_name: ''
+experiment_id: '707769927460270538'
+lifecycle_stage: deleted
+run_id: 090f62c0f0c84e789f1995526b083d1c
+run_name: melodic-cod-102
+run_uuid: 090f62c0f0c84e789f1995526b083d1c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711255247443
+status: 3
+tags: []
+user_id: Math

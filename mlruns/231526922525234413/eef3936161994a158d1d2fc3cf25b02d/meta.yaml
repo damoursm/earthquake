@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/231526922525234413/eef3936161994a158d1d2fc3cf25b02d/artifacts
+end_time: 1711735707091
+entry_point_name: ''
+experiment_id: '231526922525234413'
+lifecycle_stage: active
+run_id: eef3936161994a158d1d2fc3cf25b02d
+run_name: caring-swan-895
+run_uuid: eef3936161994a158d1d2fc3cf25b02d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735706757
+status: 3
+tags: []
+user_id: Math

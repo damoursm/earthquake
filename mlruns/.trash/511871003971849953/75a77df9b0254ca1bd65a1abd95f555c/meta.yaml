@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/511871003971849953/75a77df9b0254ca1bd65a1abd95f555c/artifacts
+deleted_time: 1711255463837
+end_time: 1711255033711
+entry_point_name: ''
+experiment_id: '511871003971849953'
+lifecycle_stage: deleted
+run_id: 75a77df9b0254ca1bd65a1abd95f555c
+run_name: overjoyed-grub-27
+run_uuid: 75a77df9b0254ca1bd65a1abd95f555c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711255033598
+status: 4
+tags: []
+user_id: Math

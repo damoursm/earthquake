@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/166483187591966394/b6daca6de419411f99892e43e05dd8d3/artifacts
+end_time: 1711736470198
+entry_point_name: ''
+experiment_id: '166483187591966394'
+lifecycle_stage: active
+run_id: b6daca6de419411f99892e43e05dd8d3
+run_name: placid-jay-350
+run_uuid: b6daca6de419411f99892e43e05dd8d3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711736470067
+status: 3
+tags: []
+user_id: Math

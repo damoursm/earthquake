@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/264130604889911492/53b0fdeee36f43e9b3abc4deee222986/artifacts
+end_time: 1711735928087
+entry_point_name: ''
+experiment_id: '264130604889911492'
+lifecycle_stage: active
+run_id: 53b0fdeee36f43e9b3abc4deee222986
+run_name: burly-crab-813
+run_uuid: 53b0fdeee36f43e9b3abc4deee222986
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735927907
+status: 3
+tags: []
+user_id: Math

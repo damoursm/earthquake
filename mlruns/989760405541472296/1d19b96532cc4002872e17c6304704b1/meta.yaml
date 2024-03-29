@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/989760405541472296/1d19b96532cc4002872e17c6304704b1/artifacts
+end_time: 1711735994197
+entry_point_name: ''
+experiment_id: '989760405541472296'
+lifecycle_stage: active
+run_id: 1d19b96532cc4002872e17c6304704b1
+run_name: skittish-roo-681
+run_uuid: 1d19b96532cc4002872e17c6304704b1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735994034
+status: 3
+tags: []
+user_id: Math

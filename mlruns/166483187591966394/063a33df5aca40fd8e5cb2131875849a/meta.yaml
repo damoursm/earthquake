@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/166483187591966394/063a33df5aca40fd8e5cb2131875849a/artifacts
+end_time: 1711736462554
+entry_point_name: ''
+experiment_id: '166483187591966394'
+lifecycle_stage: active
+run_id: 063a33df5aca40fd8e5cb2131875849a
+run_name: nervous-colt-472
+run_uuid: 063a33df5aca40fd8e5cb2131875849a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711736462418
+status: 3
+tags: []
+user_id: Math

@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/166483187591966394/7cc586469d1a40ee8aef5a7ff0f1a666/artifacts
+end_time: 1711736457768
+entry_point_name: ''
+experiment_id: '166483187591966394'
+lifecycle_stage: active
+run_id: 7cc586469d1a40ee8aef5a7ff0f1a666
+run_name: classy-stoat-341
+run_uuid: 7cc586469d1a40ee8aef5a7ff0f1a666
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711736457632
+status: 3
+tags: []
+user_id: Math

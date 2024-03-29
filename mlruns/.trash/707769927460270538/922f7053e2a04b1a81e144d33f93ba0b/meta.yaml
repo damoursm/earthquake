@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/707769927460270538/922f7053e2a04b1a81e144d33f93ba0b/artifacts
+deleted_time: 1711255459608
+end_time: 1711255233591
+entry_point_name: ''
+experiment_id: '707769927460270538'
+lifecycle_stage: deleted
+run_id: 922f7053e2a04b1a81e144d33f93ba0b
+run_name: glamorous-tern-236
+run_uuid: 922f7053e2a04b1a81e144d33f93ba0b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711255233438
+status: 3
+tags: []
+user_id: Math

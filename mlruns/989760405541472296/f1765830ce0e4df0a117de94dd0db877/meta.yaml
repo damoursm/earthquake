@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/989760405541472296/f1765830ce0e4df0a117de94dd0db877/artifacts
+end_time: 1711735987448
+entry_point_name: ''
+experiment_id: '989760405541472296'
+lifecycle_stage: active
+run_id: f1765830ce0e4df0a117de94dd0db877
+run_name: smiling-elk-595
+run_uuid: f1765830ce0e4df0a117de94dd0db877
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735987291
+status: 3
+tags: []
+user_id: Math

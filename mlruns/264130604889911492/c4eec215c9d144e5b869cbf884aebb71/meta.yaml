@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/264130604889911492/c4eec215c9d144e5b869cbf884aebb71/artifacts
+end_time: 1711735926548
+entry_point_name: ''
+experiment_id: '264130604889911492'
+lifecycle_stage: active
+run_id: c4eec215c9d144e5b869cbf884aebb71
+run_name: angry-snail-180
+run_uuid: c4eec215c9d144e5b869cbf884aebb71
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735926333
+status: 3
+tags: []
+user_id: Math

@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/969952032197388426/10ec3deb4ee14c8f97dbde2e77d668cb/artifacts
+end_time: 1711735744269
+entry_point_name: ''
+experiment_id: '969952032197388426'
+lifecycle_stage: active
+run_id: 10ec3deb4ee14c8f97dbde2e77d668cb
+run_name: zealous-hog-892
+run_uuid: 10ec3deb4ee14c8f97dbde2e77d668cb
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735744059
+status: 3
+tags: []
+user_id: Math

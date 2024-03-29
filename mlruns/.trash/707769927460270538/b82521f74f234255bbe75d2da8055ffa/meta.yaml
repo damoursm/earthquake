@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/707769927460270538/b82521f74f234255bbe75d2da8055ffa/artifacts
+deleted_time: 1711255459608
+end_time: 1711255235851
+entry_point_name: ''
+experiment_id: '707769927460270538'
+lifecycle_stage: deleted
+run_id: b82521f74f234255bbe75d2da8055ffa
+run_name: bedecked-shark-676
+run_uuid: b82521f74f234255bbe75d2da8055ffa
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711255235705
+status: 3
+tags: []
+user_id: Math

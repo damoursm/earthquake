@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/969952032197388426/b6a1432ab2a34e0a809ff53cac933403/artifacts
+end_time: 1711735728770
+entry_point_name: ''
+experiment_id: '969952032197388426'
+lifecycle_stage: active
+run_id: b6a1432ab2a34e0a809ff53cac933403
+run_name: silent-crane-848
+run_uuid: b6a1432ab2a34e0a809ff53cac933403
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735728511
+status: 3
+tags: []
+user_id: Math

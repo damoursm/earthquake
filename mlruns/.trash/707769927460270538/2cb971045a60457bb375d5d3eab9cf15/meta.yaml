@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/707769927460270538/2cb971045a60457bb375d5d3eab9cf15/artifacts
+deleted_time: 1711255459608
+end_time: 1711255241857
+entry_point_name: ''
+experiment_id: '707769927460270538'
+lifecycle_stage: deleted
+run_id: 2cb971045a60457bb375d5d3eab9cf15
+run_name: unique-sheep-489
+run_uuid: 2cb971045a60457bb375d5d3eab9cf15
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711255241705
+status: 3
+tags: []
+user_id: Math

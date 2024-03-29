@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/231526922525234413/a4f57737fd6f4c35851bcf7ff466d72f/artifacts
+end_time: 1711735647023
+entry_point_name: ''
+experiment_id: '231526922525234413'
+lifecycle_stage: active
+run_id: a4f57737fd6f4c35851bcf7ff466d72f
+run_name: trusting-whale-235
+run_uuid: a4f57737fd6f4c35851bcf7ff466d72f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735646875
+status: 3
+tags: []
+user_id: Math

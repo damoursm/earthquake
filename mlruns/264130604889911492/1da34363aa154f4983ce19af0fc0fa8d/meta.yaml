@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/264130604889911492/1da34363aa154f4983ce19af0fc0fa8d/artifacts
+end_time: 1711735952127
+entry_point_name: ''
+experiment_id: '264130604889911492'
+lifecycle_stage: active
+run_id: 1da34363aa154f4983ce19af0fc0fa8d
+run_name: rumbling-loon-802
+run_uuid: 1da34363aa154f4983ce19af0fc0fa8d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735951885
+status: 3
+tags: []
+user_id: Math

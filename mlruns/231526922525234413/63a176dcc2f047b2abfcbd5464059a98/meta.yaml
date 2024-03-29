@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/231526922525234413/63a176dcc2f047b2abfcbd5464059a98/artifacts
+end_time: 1711735695536
+entry_point_name: ''
+experiment_id: '231526922525234413'
+lifecycle_stage: active
+run_id: 63a176dcc2f047b2abfcbd5464059a98
+run_name: worried-bug-416
+run_uuid: 63a176dcc2f047b2abfcbd5464059a98
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735695391
+status: 3
+tags: []
+user_id: Math

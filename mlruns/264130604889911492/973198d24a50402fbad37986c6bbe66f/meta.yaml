@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/264130604889911492/973198d24a50402fbad37986c6bbe66f/artifacts
+end_time: 1711735938752
+entry_point_name: ''
+experiment_id: '264130604889911492'
+lifecycle_stage: active
+run_id: 973198d24a50402fbad37986c6bbe66f
+run_name: amazing-bird-700
+run_uuid: 973198d24a50402fbad37986c6bbe66f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735938553
+status: 3
+tags: []
+user_id: Math

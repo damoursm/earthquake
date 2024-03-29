@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/231526922525234413/63ae838b44814db88fe78a09a54638dc/artifacts
+end_time: 1711735651502
+entry_point_name: ''
+experiment_id: '231526922525234413'
+lifecycle_stage: active
+run_id: 63ae838b44814db88fe78a09a54638dc
+run_name: stately-grouse-194
+run_uuid: 63ae838b44814db88fe78a09a54638dc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735651364
+status: 3
+tags: []
+user_id: Math

@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/707769927460270538/0606b66fd88f4c54a66fe4528fcd8e63/artifacts
+deleted_time: 1711255459608
+end_time: 1711255222365
+entry_point_name: ''
+experiment_id: '707769927460270538'
+lifecycle_stage: deleted
+run_id: 0606b66fd88f4c54a66fe4528fcd8e63
+run_name: bedecked-trout-673
+run_uuid: 0606b66fd88f4c54a66fe4528fcd8e63
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711255222219
+status: 3
+tags: []
+user_id: Math

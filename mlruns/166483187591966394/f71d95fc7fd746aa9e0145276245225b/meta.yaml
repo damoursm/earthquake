@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/166483187591966394/f71d95fc7fd746aa9e0145276245225b/artifacts
+end_time: 1711736460081
+entry_point_name: ''
+experiment_id: '166483187591966394'
+lifecycle_stage: active
+run_id: f71d95fc7fd746aa9e0145276245225b
+run_name: polite-finch-466
+run_uuid: f71d95fc7fd746aa9e0145276245225b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711736459948
+status: 3
+tags: []
+user_id: Math

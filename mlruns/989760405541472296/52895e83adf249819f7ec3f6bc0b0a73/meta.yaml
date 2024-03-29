@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/989760405541472296/52895e83adf249819f7ec3f6bc0b0a73/artifacts
+end_time: 1711735983695
+entry_point_name: ''
+experiment_id: '989760405541472296'
+lifecycle_stage: active
+run_id: 52895e83adf249819f7ec3f6bc0b0a73
+run_name: likeable-bass-114
+run_uuid: 52895e83adf249819f7ec3f6bc0b0a73
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735983541
+status: 3
+tags: []
+user_id: Math

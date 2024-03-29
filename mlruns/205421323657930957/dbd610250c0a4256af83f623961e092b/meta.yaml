@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/205421323657930957/dbd610250c0a4256af83f623961e092b/artifacts
+end_time: 1711735712441
+entry_point_name: ''
+experiment_id: '205421323657930957'
+lifecycle_stage: active
+run_id: dbd610250c0a4256af83f623961e092b
+run_name: colorful-mouse-715
+run_uuid: dbd610250c0a4256af83f623961e092b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735712299
+status: 3
+tags: []
+user_id: Math

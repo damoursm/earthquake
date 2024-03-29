@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/264130604889911492/a3f17b445aec45b2b9cfe4ea6cd4c98b/artifacts
+end_time: 1711735933978
+entry_point_name: ''
+experiment_id: '264130604889911492'
+lifecycle_stage: active
+run_id: a3f17b445aec45b2b9cfe4ea6cd4c98b
+run_name: magnificent-crab-149
+run_uuid: a3f17b445aec45b2b9cfe4ea6cd4c98b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735933806
+status: 3
+tags: []
+user_id: Math

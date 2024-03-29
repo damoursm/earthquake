@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/231526922525234413/30ef4968f3e8433da90d5318f4bea603/artifacts
+end_time: 1711735662753
+entry_point_name: ''
+experiment_id: '231526922525234413'
+lifecycle_stage: active
+run_id: 30ef4968f3e8433da90d5318f4bea603
+run_name: inquisitive-grub-369
+run_uuid: 30ef4968f3e8433da90d5318f4bea603
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735661823
+status: 3
+tags: []
+user_id: Math

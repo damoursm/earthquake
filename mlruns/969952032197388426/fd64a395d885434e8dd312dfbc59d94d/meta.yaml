@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/969952032197388426/fd64a395d885434e8dd312dfbc59d94d/artifacts
+end_time: 1711735732636
+entry_point_name: ''
+experiment_id: '969952032197388426'
+lifecycle_stage: active
+run_id: fd64a395d885434e8dd312dfbc59d94d
+run_name: trusting-hare-73
+run_uuid: fd64a395d885434e8dd312dfbc59d94d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735732104
+status: 3
+tags: []
+user_id: Math

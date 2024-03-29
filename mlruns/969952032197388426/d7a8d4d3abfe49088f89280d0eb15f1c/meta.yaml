@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/969952032197388426/d7a8d4d3abfe49088f89280d0eb15f1c/artifacts
+end_time: 1711735747515
+entry_point_name: ''
+experiment_id: '969952032197388426'
+lifecycle_stage: active
+run_id: d7a8d4d3abfe49088f89280d0eb15f1c
+run_name: upset-moth-515
+run_uuid: d7a8d4d3abfe49088f89280d0eb15f1c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735747187
+status: 3
+tags: []
+user_id: Math

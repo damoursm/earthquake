@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/231526922525234413/c324541d3b29424ebcb0c498a0ef8eef/artifacts
+end_time: 1711735633173
+entry_point_name: ''
+experiment_id: '231526922525234413'
+lifecycle_stage: active
+run_id: c324541d3b29424ebcb0c498a0ef8eef
+run_name: beautiful-lark-97
+run_uuid: c324541d3b29424ebcb0c498a0ef8eef
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735633008
+status: 3
+tags: []
+user_id: Math

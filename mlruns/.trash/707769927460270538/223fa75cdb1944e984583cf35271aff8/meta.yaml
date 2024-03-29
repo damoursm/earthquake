@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/707769927460270538/223fa75cdb1944e984583cf35271aff8/artifacts
+deleted_time: 1711255459608
+end_time: 1711255227725
+entry_point_name: ''
+experiment_id: '707769927460270538'
+lifecycle_stage: deleted
+run_id: 223fa75cdb1944e984583cf35271aff8
+run_name: bedecked-foal-567
+run_uuid: 223fa75cdb1944e984583cf35271aff8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711255227572
+status: 3
+tags: []
+user_id: Math

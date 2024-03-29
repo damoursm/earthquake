@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/969952032197388426/c87ca0a1cbf34e2ea21fd947a6c7ef08/artifacts
+end_time: 1711735735933
+entry_point_name: ''
+experiment_id: '969952032197388426'
+lifecycle_stage: active
+run_id: c87ca0a1cbf34e2ea21fd947a6c7ef08
+run_name: ambitious-dove-894
+run_uuid: c87ca0a1cbf34e2ea21fd947a6c7ef08
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735735744
+status: 3
+tags: []
+user_id: Math

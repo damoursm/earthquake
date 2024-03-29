@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/205421323657930957/373886792aea46368497b427eff2e02b/artifacts
+end_time: 1711735680418
+entry_point_name: ''
+experiment_id: '205421323657930957'
+lifecycle_stage: active
+run_id: 373886792aea46368497b427eff2e02b
+run_name: wise-chimp-789
+run_uuid: 373886792aea46368497b427eff2e02b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711735680277
+status: 3
+tags: []
+user_id: Math
