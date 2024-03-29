@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/327848deea2144bfa5b42b0e27020e50/artifacts
+end_time: 1711738507400
+entry_point_name: ''
+experiment_id: '188592050434053334'
+lifecycle_stage: active
+run_id: 327848deea2144bfa5b42b0e27020e50
+run_name: serious-goose-116
+run_uuid: 327848deea2144bfa5b42b0e27020e50
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711738507213
+status: 3
+tags: []
+user_id: Math

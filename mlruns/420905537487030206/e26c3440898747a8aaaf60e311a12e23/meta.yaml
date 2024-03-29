@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/420905537487030206/e26c3440898747a8aaaf60e311a12e23/artifacts
+end_time: 1711738512838
+entry_point_name: ''
+experiment_id: '420905537487030206'
+lifecycle_stage: active
+run_id: e26c3440898747a8aaaf60e311a12e23
+run_name: big-kite-422
+run_uuid: e26c3440898747a8aaaf60e311a12e23
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711738512682
+status: 3
+tags: []
+user_id: Math

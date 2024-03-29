@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/420905537487030206/6a0f34c1599e4b3589fa1bd6aed5d01b/artifacts
+end_time: 1711738504608
+entry_point_name: ''
+experiment_id: '420905537487030206'
+lifecycle_stage: active
+run_id: 6a0f34c1599e4b3589fa1bd6aed5d01b
+run_name: tasteful-ray-802
+run_uuid: 6a0f34c1599e4b3589fa1bd6aed5d01b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711738504445
+status: 3
+tags: []
+user_id: Math

@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/420905537487030206/9b6177af9b6244cea41be54e66fed3f4/artifacts
+end_time: 1711738509560
+entry_point_name: ''
+experiment_id: '420905537487030206'
+lifecycle_stage: active
+run_id: 9b6177af9b6244cea41be54e66fed3f4
+run_name: melodic-shad-714
+run_uuid: 9b6177af9b6244cea41be54e66fed3f4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711738509343
+status: 3
+tags: []
+user_id: Math

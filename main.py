@@ -126,10 +126,10 @@ class MLflowExperiment():
             self.model, metrics, artifacts = train_validate(
                 self.best_hyperparams, pd.concat([self.df_train, self.df_validate]), self.df_test
             )
-            self.run_id = self.push_run(self.best_hyperparams, metrics, artifacts, tags={'test': True, 'RETRAIN_FOR_TEST': RETRAIN_FOR_TEST, 'BALANCE_METADATA': BALANCE_METADATA})
+            self.run_id = self.push_run(self.best_hyperparams, metrics, artifacts, tags={'test': True, 'RETRAIN_FOR_TEST': RETRAIN_FOR_TEST, 'BALANCE_METADATA': BALANCE_METADATA, 'features': FEATURES})
         else:
             metrics, artifacts = validate(self.best_model, self.df_test, self.best_hyperparams)
-            self.run_id = self.push_run(self.best_hyperparams, metrics, artifacts, tags={'test': True, 'RETRAIN_FOR_TEST': RETRAIN_FOR_TEST, 'BALANCE_METADATA': BALANCE_METADATA})
+            self.run_id = self.push_run(self.best_hyperparams, metrics, artifacts, tags={'test': True, 'RETRAIN_FOR_TEST': RETRAIN_FOR_TEST, 'BALANCE_METADATA': BALANCE_METADATA, 'features': FEATURES})
 
         # Scale test
         # test_data = scale(scaler=train_scaler)

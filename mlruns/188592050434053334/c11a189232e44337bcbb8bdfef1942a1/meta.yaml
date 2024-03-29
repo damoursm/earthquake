@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/c11a189232e44337bcbb8bdfef1942a1/artifacts
+end_time: 1711738497581
+entry_point_name: ''
+experiment_id: '188592050434053334'
+lifecycle_stage: active
+run_id: c11a189232e44337bcbb8bdfef1942a1
+run_name: shivering-hawk-478
+run_uuid: c11a189232e44337bcbb8bdfef1942a1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711738497425
+status: 3
+tags: []
+user_id: Math

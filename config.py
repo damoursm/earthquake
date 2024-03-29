@@ -1,7 +1,7 @@
 import skopt
 
 
-EXPERIMENT_NAME = ''
+EXPERIMENT_NAME = 'With Highly Correlated Features'
 
 INSTANCE_EVENTS_FILENAME = 'Instance_sample_dataset/data/Instance_events_counts_10k.hdf5'
 INSTANCE_NOISE_FILENAME = 'Instance_sample_dataset/data/Instance_noise_1k.hdf5'
@@ -46,11 +46,11 @@ FEATURES = {
         'trace_E_spikes': feat_eng_num_minmax,
         'trace_N_spikes': feat_eng_num_minmax,
         'trace_Z_spikes': feat_eng_num_minmax,
-        # 'trace_GPD_P_number': feat_eng_num_minmax,
-        # 'trace_GPD_S_number': feat_eng_num_minmax,
-        # 'trace_EQT_number_detections': feat_eng_num_minmax,
-        # 'trace_EQT_P_number': feat_eng_num_minmax,
-        # 'trace_EQT_S_number': feat_eng_num_minmax,
+        'trace_GPD_P_number': feat_eng_num_minmax,
+        'trace_GPD_S_number': feat_eng_num_minmax,
+        'trace_EQT_number_detections': feat_eng_num_minmax,
+        'trace_EQT_P_number': feat_eng_num_minmax,
+        'trace_EQT_S_number': feat_eng_num_minmax,
 
         # 'station_distance_to_coast_km': feat_eng_num_minmax,
         # 'station_distance_to_nearest_tectonic_plate_boundary_km': feat_eng_num_minmax,
@@ -80,7 +80,7 @@ FEATURES_SCALING = {
 
 NB_ITER = 10
 METRIC_EVAL = 'AUC'
-RETRAIN_FOR_TEST = False
+RETRAIN_FOR_TEST = True
 
 # TODO rajouter hyperparametres dept et width pour CNN
 HYPERPARAMETERS = [
