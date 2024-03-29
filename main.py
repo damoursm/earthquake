@@ -5,20 +5,23 @@ import skopt
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-from utils.features_engineering import data_enrich, scale, shap_feat_imp
-from utils.training import train_validate, test
+from utils.features_engineering import data_balance, data_enrich, scale, shap_feat_imp
+from utils.training import train_validate, validate
 from utils.data_load import load_dataset
 from utils.dataloaders.InstanceDataset import InstanceDataset
 
 from config import \
+    EXPERIMENT_NAME, \
     FEATURES, \
     HYPERPARAMETERS, \
     INSTANCE_EVENTS_FILENAME, \
     INSTANCE_NOISE_FILENAME, \
     INSTANCE_EVENTS_METADATA_FILENAME, \
     INSTANCE_NOISE_METADATA_FILENAME, \
+    BALANCE_METADATA, \
     FEATURES_SCALING, \
-    NB_ITER
+    NB_ITER, \
+    RETRAIN_FOR_TEST
 
 '''
 Make the hyperparameters tuning that optimize the features engineering and filtering and the hyperparameters of the model 
@@ -30,27 +33,17 @@ class MLflowExperiment():
     def __init__(self):
         self.exp_id = None
         self.run_id = None
-        self.model = None
-        # self.best_score = None
-        # self.best_params = None
-        # self.best_model = None
-        # self.best_features = None
-        # self.best_run_id = None
-        # self.best_model_name = None
-        # self.best_model_type = None
-        # self.best_model_features = None
-        # self.best_model_hyperparams = None
-        # self.best_model_score = None
-        # self.best_model_shap_values = None
-        # self.best_model_shap_values_abs = None
+        self.best_metric = None
+        self.best_model = None
         self.df_train = None
+        self.df_validate = None
         self.df_test = None
 
         # Setup MLflow experiment
         self.client = mlflow.tracking.MlflowClient()
         now = datetime.now()  # current date and time
         date_time = now.strftime("%Y-%m-%d %H:%M:%S")
-        self.exp_id = self.client.create_experiment(f"Earthquake: {date_time}")
+        self.exp_id = self.client.create_experiment(f"Earthquake: {EXPERIMENT_NAME} {date_time}")
 
     def features_engineering(self):
         # Load metadata CSVs
@@ -85,24 +78,58 @@ class MLflowExperiment():
 
         # Split the dataset
         self.df_train = df_meta_scaled.sample(frac=0.8, random_state=42)
-        self.df_test = df_meta_scaled.drop(self.df_train.index)
+        validate_test = df_meta_scaled.drop(self.df_train.index)
+        self.df_validate = validate_test.sample(frac=0.5, random_state=42)
+        self.df_test = validate_test.drop(self.df_validate.index)
+
+        # Balance the dataset
+        for dataset in BALANCE_METADATA:
+            if dataset == 'train':
+                self.df_train = data_balance(self.df_train)
+            elif dataset == 'validate':
+                self.df_validate = data_balance(self.df_validate)
+            elif dataset == 'test':
+                self.df_test = data_balance(self.df_test)
 
         # Make SHAP features importance Analysis
         # shap_feat_imp()
 
     def run_experiment(self):
+        if HYPERPARAMETERS[-1].categories[0] in ['auc', 'accuracy', 'f1', 'precision', 'recall']:
+            self.best_metric = 0
+        elif HYPERPARAMETERS[-1].categories[0] in ['log_loss', 'loss', 'mse', 'mae', 'rmse']:
+            self.best_metric = float('inf')
+
         # Hyperparams Tuning
         @skopt.utils.use_named_args(HYPERPARAMETERS)
         def objective(**hyperparams):
-            self.model, metrics, artifacts = train_validate(hyperparams, self.df_train, self.df_test)
-            self.run_id = self.push_run(hyperparams, metrics, artifacts, tags={'test': False})
-            if hyperparams['metric'] in ['auc', 'accuracy', 'f1', 'precision', 'recall']:
+            model, metrics, artifacts = train_validate(hyperparams, self.df_train, self.df_validate)
+            self.run_id = self.push_run(hyperparams, metrics, artifacts, tags={'test': False, 'BALANCE_METADATA': BALANCE_METADATA})
+
+            if hyperparams['metric'] in ['auc', 'accuracy', 'f1', 'precision', 'recall']:  # Maximize
+                if metrics['metric_eval'] > self.best_metric:
+                    self.best_metric = metrics['metric_eval']
+                    self.best_hyperparams = hyperparams
+                    self.best_model = model
                 return -1.0 * metrics['metric_eval']
-            elif hyperparams['metric'] in ['log_loss', 'loss', 'mse', 'mae', 'rmse']:
+
+            elif hyperparams['metric'] in ['log_loss', 'loss', 'mse', 'mae', 'rmse']:  # Minimize
+                if metrics['metric_eval'] < self.best_metric:
+                    self.best_metric = metrics['metric_eval']
+                    self.best_hyperparams = hyperparams
+                    self.best_model = model
                 return metrics['metric_eval']
 
         results = skopt.gp_minimize(objective, dimensions=HYPERPARAMETERS, n_calls=NB_ITER)
-        self.best_hyperparams = results.x
+
+        if RETRAIN_FOR_TEST:  # Retain the model with the best hyperparams on train + validate sets
+            self.model, metrics, artifacts = train_validate(
+                self.best_hyperparams, pd.concat([self.df_train, self.df_validate]), self.df_test
+            )
+            self.run_id = self.push_run(self.best_hyperparams, metrics, artifacts, tags={'test': True, 'RETRAIN_FOR_TEST': RETRAIN_FOR_TEST, 'BALANCE_METADATA': BALANCE_METADATA})
+        else:
+            metrics, artifacts = validate(self.best_model, self.df_test, self.best_hyperparams)
+            self.run_id = self.push_run(self.best_hyperparams, metrics, artifacts, tags={'test': True, 'RETRAIN_FOR_TEST': RETRAIN_FOR_TEST, 'BALANCE_METADATA': BALANCE_METADATA})
 
         # Scale test
         # test_data = scale(scaler=train_scaler)

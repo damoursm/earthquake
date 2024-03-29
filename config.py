@@ -1,10 +1,15 @@
 import skopt
 
 
+EXPERIMENT_NAME = ''
+
 INSTANCE_EVENTS_FILENAME = 'Instance_sample_dataset/data/Instance_events_counts_10k.hdf5'
 INSTANCE_NOISE_FILENAME = 'Instance_sample_dataset/data/Instance_noise_1k.hdf5'
 INSTANCE_EVENTS_METADATA_FILENAME = 'Instance_sample_dataset/metadata/metadata_Instance_events_10k.csv'
 INSTANCE_NOISE_METADATA_FILENAME = 'Instance_sample_dataset/metadata/metadata_Instance_noise_1k.csv'
+
+SIGNALS_PREDS = 'data/signals_preds.csv'  # TODO faire CSV des signals predictions
+BALANCE_METADATA = ['train', 'validate', 'test']
 
 feat_eng_num = [('outliers_filter', 3), ('MinMaxScaler', (0, 1))]
 feat_eng_num_minmax = [('MinMaxScaler', (0, 1))]
@@ -41,39 +46,12 @@ FEATURES = {
         'trace_E_spikes': feat_eng_num_minmax,
         'trace_N_spikes': feat_eng_num_minmax,
         'trace_Z_spikes': feat_eng_num_minmax,
-        'trace_GPD_P_number': feat_eng_num_minmax,
-        'trace_GPD_S_number': feat_eng_num_minmax,
-        'trace_EQT_number_detections': feat_eng_num_minmax,
-        'trace_EQT_P_number': feat_eng_num_minmax,
-        'trace_EQT_S_number': feat_eng_num_minmax,
-        # (0, 5): feat_eng_num_minmax,
-        # (0, 7): feat_eng_num_minmax,
-        # (1, 6): feat_eng_num_minmax,
-        # (1, 7): feat_eng_num_minmax,
-        # (1, 8): feat_eng_num_minmax,
-        # (2, 5): feat_eng_num_minmax,
-        # (2, 6): feat_eng_num_minmax,
-        # (2, 7): feat_eng_num_minmax,
-        # (2, 8): feat_eng_num_minmax,
-        # (2, 9): feat_eng_num_minmax,
-        # (2, 15): feat_eng_num_minmax,
-        # (3, 2): feat_eng_num_minmax,
-        # (3, 6): feat_eng_num_minmax,
-        # (3, 7): feat_eng_num_minmax,
-        # (3, 8): feat_eng_num_minmax,
-        # (3, 9): feat_eng_num_minmax,
-        #
-        # (3, 10): feat_eng_num_minmax,
-        # (4, 8): feat_eng_num_minmax,
-        # (4, 9): feat_eng_num_minmax,
-        # (4, 11): feat_eng_num_minmax,
-        # (4, 12), (4, 13), (4, 15),  (5, 2),
-        # (5, 6),  (5, 7),  (5, 8),  (5, 9), (5, 10), (5, 11), (5, 13), (5, 14),
-        # (6, 4),  (6, 5),  (6, 6),  (6, 7),  (6, 8),  (6, 9), (6, 12),  (7, 3),
-        # (7, 4),  (7, 5),  (7, 6),  (7, 7),  (8, 0),  (8, 1),  (8, 2),  (8, 3),
-        # (8, 4),  (8, 5),  (8, 6),  (9, 0),  (9, 1),  (9, 2),  (9, 3),  (9, 4),
-        # (9, 5), (9, 10), (10, 0), (10, 2), (10, 3), (10, 4), (10, 5), (10, 6),
-        # (10, 7), (11, 3), (11, 4), (11, 5), (11, 6)
+        # 'trace_GPD_P_number': feat_eng_num_minmax,
+        # 'trace_GPD_S_number': feat_eng_num_minmax,
+        # 'trace_EQT_number_detections': feat_eng_num_minmax,
+        # 'trace_EQT_P_number': feat_eng_num_minmax,
+        # 'trace_EQT_S_number': feat_eng_num_minmax,
+
         # 'station_distance_to_coast_km': feat_eng_num_minmax,
         # 'station_distance_to_nearest_tectonic_plate_boundary_km': feat_eng_num_minmax,
         # 'station_distance_to_nearest_active_fault_km': feat_eng_num_minmax,
@@ -102,6 +80,7 @@ FEATURES_SCALING = {
 
 NB_ITER = 10
 METRIC_EVAL = 'AUC'
+RETRAIN_FOR_TEST = False
 
 # TODO rajouter hyperparametres dept et width pour CNN
 HYPERPARAMETERS = [

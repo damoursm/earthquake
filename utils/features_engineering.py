@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 import numpy as np
 import random
 
-from config import FEATURES, FEATURES_SCALING
+from config import FEATURES, FEATURES_SCALING, SIGNALS_PREDS
 
 
 def add_random_feature(df):
@@ -166,6 +166,14 @@ def scale(data, features, scaling_params, scaler=None, outliers_limit=False, out
     return scaled_data, new_scaler, outliers_scaler
 
 
+def data_balance(data, target='source'):
+    df_events = data[data[target] == 1]
+    df_noise = data[data[target] == 0]
+    df_events = df_events.sample(n=len(df_noise), random_state=42)
+    df_meta_scaled = pd.concat([df_events, df_noise])
+    return df_meta_scaled
+
+
 def data_enrich(df_meta):
     # Make feature lat-long grid
     lat_min = df_meta['station_latitude_deg'].min()
@@ -176,7 +184,8 @@ def data_enrich(df_meta):
     )
     ohe_df = pd.get_dummies(df_meta['station_grid_cell'])
 
-    # Other data enrich...
-
+    # # Join the signals predictions
+    # signals = pd.read_csv(SIGNALS_PREDS)
+    # df_meta = df_meta.join(signals, on='trace_name')
 
     return df_meta, ohe_df
