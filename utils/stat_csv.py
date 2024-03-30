@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import h5py
 
 
-def edit_csv_correl(noiseCSV, earthquakeCSV, output_file):
+def merge_csv_correl(noiseCSV, earthquakeCSV, output_file):
     df1 = pd.read_csv(noiseCSV)
     df2 = pd.read_csv(earthquakeCSV)
     df1['source'] = 0
@@ -18,7 +18,7 @@ def edit_csv_correl(noiseCSV, earthquakeCSV, output_file):
     merged_df = pd.concat([df1, df2], axis=0)
     merged_df.reset_index(drop=True, inplace=True)
     merged_df.to_csv(output_file, index=False)
-#edit_csv_correl("path1", "path2", "path3") Il faut mettre les path vers les fichiers
+#merge_csv_correl("path1", "path2", "path3") Il faut mettre les path vers les fichiers
 
 
 def matrixCorrelation(df):
@@ -33,9 +33,9 @@ def matrixCorrelation(df):
 #matrixCorrelation('pd.read_csv(PATH VERS LE CSV MERGÉ)')
 
 def stat_hdf5(urlHdf5, output_csv='test.csv'):
-    stats_df = pd.DataFrame(columns=["mean_E", "median_E", "max_E", "min_E", "rms_E","lquartile_E", "uquartile_E",
-                                     "mean_N", "median_N", "max_N", "min_N", "rms_N","lquartile_N", "uquartile_N",
-                                     "mean_Z", "median_Z", "max_Z", "min_Z", "rms_Z", "lquartile_Z", "uquartile_Z"])
+    stats_df = pd.DataFrame(columns=["mean_E_Norma", "median_E_Norma", "max_E_Norma", "min_E_Norma", "rms_E_Norma","lquartile_E_Norma", "uquartile_E_Norma",
+                                     "mean_N_Norma", "median_N_Norma", "max_N_Norma", "min_N_Norma", "rms_N_Norma","lquartile_N_Norma", "uquartile_N_Norma",
+                                     "mean_Z_Norma", "median_Z_Norma", "max_Z_Norma", "min_Z_Norma", "rms_Z_Norma", "lquartile_Z_Norma", "uquartile_Z_Norma"])
     
     with h5py.File(urlHdf5, 'r') as hdf5:
         for i, nom_dataset in enumerate(hdf5['data']):
@@ -56,37 +56,48 @@ def process_data(data_set):
     
 def calculate_stats(noise_data):
     stats = {}
-    stats["mean_E"] = np.mean(noise_data[0], axis=0)
-    stats["median_E"] = np.median(noise_data[0],axis=0)
-    stats["max_E"] = np.max(noise_data[0],axis=0)
-    stats["min_E"] = np.min(noise_data[0],axis=0)
-    stats["rms_E"] = np.sqrt(np.mean(noise_data[0]**2, axis=0))#root mean square
-    stats["lquartile_E"] = np.percentile(noise_data[0], 25) #lower quartile
-    stats["uquartile_E"] = np.percentile(noise_data[0], 75) #upper quartile
+    stats["mean_E_Norma"] = np.mean(noise_data[0], axis=0)
+    stats["median_E_Norma"] = np.median(noise_data[0],axis=0)
+    stats["max_E_Norma"] = np.max(noise_data[0],axis=0)
+    stats["min_E_Norma"] = np.min(noise_data[0],axis=0)
+    stats["rms_E_Norma"] = np.sqrt(np.mean(noise_data[0]**2, axis=0))#root mean square
+    stats["lquartile_E_Norma"] = np.percentile(noise_data[0], 25) #lower quartile
+    stats["uquartile_E_Norma"] = np.percentile(noise_data[0], 75) #upper quartile
     
-    stats["mean_N"] = np.mean(noise_data[1],axis=0)
-    stats["median_N"] = np.median(noise_data[1],axis=0)
-    stats["max_N"] = np.max(noise_data[1],axis=0)
-    stats["min_N"] = np.min(noise_data[1],axis=0)
-    stats["rms_N"] = np.sqrt(np.mean(noise_data[1]**2, axis=0)) 
-    stats["lquartile_N"] = np.percentile(noise_data[0], 25) #lower quartile
-    stats["uquartile_N"] = np.percentile(noise_data[0], 75) #upper quartile
+    stats["mean_N_Norma"] = np.mean(noise_data[1],axis=0)
+    stats["median_N_Norma"] = np.median(noise_data[1],axis=0)
+    stats["max_N_Norma"] = np.max(noise_data[1],axis=0)
+    stats["min_N_Norma"] = np.min(noise_data[1],axis=0)
+    stats["rms_N_Norma"] = np.sqrt(np.mean(noise_data[1]**2, axis=0)) 
+    stats["lquartile_N_Norma"] = np.percentile(noise_data[0], 25) #lower quartile
+    stats["uquartile_N_Norma"] = np.percentile(noise_data[0], 75) #upper quartile
     
-    stats["mean_Z"] = np.mean(noise_data[2],axis=0)
-    stats["median_Z"] = np.median(noise_data[2],axis=0)
-    stats["max_Z"] = np.max(noise_data[2],axis=0)
-    stats["min_Z"] = np.min(noise_data[2],axis=0)
-    stats["rms_Z"] = np.sqrt(np.mean(noise_data[2]**2, axis=0)) 
-    stats["lquartile_Z"] = np.percentile(noise_data[0], 25) #lower quartile
-    stats["uquartile_Z"] = np.percentile(noise_data[0], 75) #upper quartile
+    stats["mean_Z_Norma"] = np.mean(noise_data[2],axis=0)
+    stats["median_Z_Norma"] = np.median(noise_data[2],axis=0)
+    stats["max_Z_Norma"] = np.max(noise_data[2],axis=0)
+    stats["min_Z_Norma"] = np.min(noise_data[2],axis=0)
+    stats["rms_Z_Norma"] = np.sqrt(np.mean(noise_data[2]**2, axis=0)) 
+    stats["lquartile_Z_Norma"] = np.percentile(noise_data[0], 25) #lower quartile
+    stats["uquartile_Z_Norma"] = np.percentile(noise_data[0], 75) #upper quartile
     return stats
-"""            
+
+        
 #Merger des csv
 def merge_csv_files(file1_path, file2_path, merged_file_path):
     df1 = pd.read_csv(file1_path)
     df2 = pd.read_csv(file2_path)
     merged_df = pd.concat([df1, df2], axis=1)
     merged_df.to_csv(merged_file_path, index=False)
-merge_csv_files("Metadata.csv", "test.csv", "mergetest.csv")
-"""
-stat_hdf5('test.hdf5', 'test.csv')
+#merge_csv_files("Metadata.csv", "test.csv", "mergetest.csv")
+
+def commonColumn(pathE, pathN):
+    df1 = pd.read_csv(pathE)
+    df2 = pd.read_csv(pathN)
+    common_columns = [col for col in df1.columns if col in df2.columns]
+    df2 = df2[common_columns]
+    df1_common = df1.reindex(columns=common_columns)
+    df2_common = df2.reindex(columns=common_columns)
+    df1_common.to_csv('Earthquake_common.csv', index=False)
+    df2_common.to_csv('Noise_common.csv', index=False)
+    
+#stat_hdf5('20kNoiseAugmente.hdf5', 'Noise_common.csv')
