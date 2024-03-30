@@ -28,6 +28,8 @@ def main():
 
     final_output_dir = env_values["FINAL_OUTPUT_DIR"]
 
+    best_model_name='best_model.h5'
+
 
     print("############################ Data set ############################")
 
@@ -101,7 +103,10 @@ def main():
             gpuid=None,
             gpu_limit=None,
             use_multiprocessing=True,
-            best_model_name="best_model.h5")
+            best_model_name=best_model_name)
+    
+    print("############################ Testing ############################")
+
 
     print("########################################################")
 
