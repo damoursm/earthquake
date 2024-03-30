@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 from utils.gpu_monitoring import GPUMonitor
+import multiprocessing
 
 
 def train_detection_only(train_set, val_set, model, loss, correct_count, batch_size=128, epochs=10, learning_rate=0.01, temp_dir=""):
@@ -46,10 +47,10 @@ def train_detection_only(train_set, val_set, model, loss, correct_count, batch_s
 
     # initialize loaders
     train_loader = torch.utils.data.DataLoader(
-        train_set, batch_size=batch_size, shuffle=True, num_workers=2
+        train_set, batch_size=batch_size, shuffle=True, num_workers=multiprocessing.cpu_count()
     )
     val_loader = torch.utils.data.DataLoader(
-        val_set, batch_size=batch_size, shuffle=False, num_workers=2
+        val_set, batch_size=batch_size, shuffle=False, num_workers=multiprocessing.cpu_count()
     )
 
     # custom object in order to monitor how much we use the GPU
@@ -226,10 +227,10 @@ def train_detection_and_phase(train_set, val_set, model, detection_loss, phase_l
 
     # initialize loaders
     train_loader = torch.utils.data.DataLoader(
-        train_set, batch_size=batch_size, shuffle=True, num_workers=2
+        train_set, batch_size=batch_size, shuffle=True, num_workers=multiprocessing.cpu_count()
     )
     val_loader = torch.utils.data.DataLoader(
-        val_set, batch_size=batch_size, shuffle=False, num_workers=2
+        val_set, batch_size=batch_size, shuffle=False, num_workers=multiprocessing.cpu_count()
     )
 
     print(model)

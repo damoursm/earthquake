@@ -11,3 +11,5 @@ jupyter
 torch
 shap
 python-dotenv
+torchinfo
+obspy

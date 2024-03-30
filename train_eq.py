@@ -1,16 +1,20 @@
-from utils.dataloaders.EventDetectionInstanceDataset import EventDetectionInstanceDataset
-from utils.generic_trainer import train_detection_only
-from utils.plot import plot_error_and_accuracy
-
-from nn.cnn import CNN
-from torch import nn
-
-from utils.correct_counter import correct
-
-import shutil
+from __future__ import print_function
 import os
+os.environ['KERAS_BACKEND']='tensorflow'
+from tensorflow import keras
+from keras.layers import Input
+
+from nn.eq_transformer import EqModel
+
+from tensorflow.python.util import deprecation
+deprecation._PRINT_DEPRECATION_WARNINGS = False
 
 from dotenv import dotenv_values
+
+from utils.dataloaders.InstanceDataset import InstanceDataset
+from utils.preprocess_data import shuffle_events
+from utils.keras_generic_trainer import trainer
+
 
 def main():
     env_values = dotenv_values(".env")
@@ -24,68 +28,142 @@ def main():
 
     final_output_dir = env_values["FINAL_OUTPUT_DIR"]
 
-    split_percentage=[0.85, 0.05, 0.10]
 
     print("############################ Data set ############################")
+
+    shuffled_event_metadata_file, shuffled_noise_metadata_file = shuffle_events(
+        event_metadata_file=event_metadata_file,
+        noise_metadata_file=noise_metadata_file,
+        random_state=9,
+        output_event_metadata_file=f"{temp_dir}/shuffled_event_metadata.csv",
+        output_noise_metadata_file=f"{temp_dir}/shuffled_noise_metadata.csv",
+        balance=True,
+        remove_empty_phase=True)
+
+    split_percentage=[0.80, 0.10, 0.10]
 
     print(f"Earthquake hdf5 file: {event_hdf5_file}")
     print(f"Earthquake metadata file: {event_metadata_file}")
     print(f"Noise hdf5 file: {noise_hdf5_file}")
     print(f"Noise metadata file: {noise_metadata_file}")
+    print(f"Earthquake metadata file (shuffled): {shuffled_event_metadata_file}")
+    print(f"Noise metadata file (shuffled): {shuffled_noise_metadata_file}")
+    
+    padding_type="percentage"
+    start_padding_value=0.2
+    end_padding_value=0.2
+    target_phase=True
+    phase_padding=20
+    remove_empty_phase=True #Keep it to true as when a phase is missing, the box will be malformed
+    target_type="box_trapezoidal"
+    #target_type="box_square"
+    norm_mode='max'
 
-    train_dataset = EventDetectionInstanceDataset(event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, "binary", split_index=0, split_percentage=split_percentage, padding_type="sample", padding_value=100)
-    val_dataset = EventDetectionInstanceDataset(event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, "binary", split_index=1, split_percentage=split_percentage, padding_type="sample", padding_value=100)
-    test_dataset = EventDetectionInstanceDataset(event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, "binary", split_index=2, split_percentage=split_percentage, padding_type="sample", padding_value=100)
+    train_dataset = InstanceDataset(event_hdf5_file, shuffled_event_metadata_file, noise_hdf5_file, shuffled_noise_metadata_file, target_type=target_type, split_index=0, split_percentage=split_percentage, padding_type=padding_type, start_padding_value=start_padding_value, end_padding_value=end_padding_value, target_phase=target_phase, phase_padding=phase_padding, remove_empty_phase=remove_empty_phase, norm_mode=norm_mode)
+    val_dataset = InstanceDataset(event_hdf5_file, shuffled_event_metadata_file, noise_hdf5_file, shuffled_noise_metadata_file, target_type=target_type, split_index=1, split_percentage=split_percentage, padding_type=padding_type, start_padding_value=start_padding_value, end_padding_value=end_padding_value, target_phase=target_phase, phase_padding=phase_padding, remove_empty_phase=remove_empty_phase, norm_mode=norm_mode)
+    test_dataset = InstanceDataset(event_hdf5_file, shuffled_event_metadata_file, noise_hdf5_file, shuffled_noise_metadata_file, target_type=target_type, split_index=2, split_percentage=split_percentage, padding_type=padding_type, start_padding_value=start_padding_value, end_padding_value=end_padding_value, target_phase=target_phase, phase_padding=phase_padding, remove_empty_phase=remove_empty_phase, norm_mode=norm_mode)
 
     print(f"Dataset size: Train={len(train_dataset)} - Val={len(val_dataset)} - Test={len(test_dataset)}")
 
-    data, target = train_dataset[0]
+    data, detection, p_target, s_target, trace_name = train_dataset[0]
     print(f"Single Earthquake Data shape: {data.shape}")
-    print(f"Single Earthquake Target: {target}")
+    print(f"Single Earthquake detection shape: {detection.shape}")
+    print(f"Single Earthquake p Target shape: {p_target.shape}")
+    print(f"Single Earthquake s Target shape: {s_target.shape}")
+    print(f"Single Earthquake trace name: {trace_name}")
 
-    data, target = train_dataset[len(train_dataset) - 1]
-    print(f"Single Noise Data shape: {data.shape}")
-    print(f"Single Noise Target: {target}")
+    data, detection, p_target, s_target, trace_name = train_dataset[len(train_dataset) - 1]
+    print(f"Single Earthquake Data shape: {data.shape}")
+    print(f"Single Earthquake detection shape: {detection.shape}")
+    print(f"Single Earthquake p Target shape: {p_target.shape}")
+    print(f"Single Earthquake s Target shape: {s_target.shape}")
+    print(f"Single Earthquake trace name: {trace_name}")
 
     print("############################ Model ############################")
 
-    model = CNN(
-        input_channels=3,
-        conv_channels= [
-            8, 16, 32, 64, 128
-        ], kernel_sizes=[
-            11, 9, 7, 5, 3
-        ], mlp_layers=[
-            128, 64, 32, 2
-        ],
-        dropout=0.4
-    )
+    input_dimention=(12000, 3)
 
-    print(model)
+    inp = Input(shape=input_dimention, name='input') 
+    model, batch_size, epochs = _get_model(len(train_dataset), inp)
+    model.summary()
 
     print("############################ Training ############################")
 
-    loss = nn.CrossEntropyLoss()
-
-    e, a, model_path, monitor = train_detection_only(train_dataset, val_dataset, model, loss, correct, batch_size=64, epochs=2, temp_dir=temp_dir)
-
-    plot_error_and_accuracy(e, a, final_output_dir)
-    shutil.copy(model_path, final_output_dir)
-    monitor.save_plots(final_output_dir)
-
+    trainer(train_dataset=train_dataset,
+            val_dataset=val_dataset,
+            model=model,
+            output_name=final_output_dir,
+            shuffle=True,
+            batch_size=batch_size,
+            epochs=epochs,
+            monitor='val_loss',
+            patience=12,
+            gpuid=None,
+            gpu_limit=None,
+            use_multiprocessing=True,
+            best_model_name="best_model.h5")
 
     print("########################################################")
 
-    # with h5py.File("/project/def-sponsor00/earthquake/data/instance/Instance_events_counts.hdf5", 'r') as f:
-    #     print(f['data'])
-    #     print(f['data'].keys())
-    #     print(f['data']['11030611.IV.OFFI..HH'])
-    #     print(f['data']['11030611.IV.OFFI..HH'][2, :15])
 
-    # a = np.array([0, 1, 2])
-    # print(a**2)
+def _get_model(train_data_size, input):
+    if train_data_size <= 2000:
+        nb_filters=[8, 16, 16, 32, 32, 64, 64]
+        kernel_size=[11, 9, 7, 7, 5, 5, 3]
+        endcoder_depth=7
+        decoder_depth=7
+        cnn_blocks=5
+        lstm_blocks=2
+        kernel_padding='same'
+        activation = 'relu'         
+        drop_rate=0.1
+        loss_weights=[0.25, 0.35, 0.4]
+        loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+        batch_size = 32
+        epochs = 2
+    elif train_data_size <= 20000:
+        nb_filters=[8, 16, 16, 32, 32, 64, 64]
+        kernel_size=[11, 9, 7, 7, 5, 5, 3]
+        endcoder_depth=7
+        decoder_depth=7
+        cnn_blocks=5
+        lstm_blocks=2
+        kernel_padding='same'
+        activation = 'relu'         
+        drop_rate=0.1
+        loss_weights=[0.25, 0.35, 0.4]
+        loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+        batch_size = 32
+        epochs = 20
+    else:
+        nb_filters=[8, 16, 16, 32, 32, 64, 64]
+        kernel_size=[11, 9, 7, 7, 5, 5, 3]
+        endcoder_depth=7
+        decoder_depth=7
+        cnn_blocks=5
+        lstm_blocks=2
+        kernel_padding='same'
+        activation = 'relu'         
+        drop_rate=0.1
+        loss_weights=[0.25, 0.35, 0.4]
+        loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+        batch_size = 32
+        epochs = 20
 
-
+    return EqModel(nb_filters=nb_filters,
+              kernel_size=kernel_size,
+              padding=kernel_padding,
+              activationf=activation,
+              endcoder_depth=endcoder_depth,
+              decoder_depth=decoder_depth,
+              cnn_blocks=cnn_blocks,
+              BiLSTM_blocks=lstm_blocks,
+              drop_rate=drop_rate, 
+              loss_weights=loss_weights,
+              loss_types=loss_types,
+              kernel_regularizer=keras.regularizers.l2(1e-6),
+              bias_regularizer=keras.regularizers.l1(1e-4)
+               )(input), batch_size, epochs
 
 if __name__ == '__main__':
     main()

@@ -10,7 +10,7 @@ class InstanceDataset(Dataset):
     Raw Instance dataset.
     Load events and noise from file and returns the 3 C waveforms, wether there is a earthquake or not, p phase and s phase
     """
-    def __init__(self, event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, target_type="box_square", padding_type="sample", start_padding_value=280, end_padding_value=280, target_phase=True, phase_padding=20, remove_empty_phase=True, transform=None, split_index=0, split_percentage=[0.8, 0.15, 0.5]):
+    def __init__(self, event_hdf5_file, event_metadata_file, noise_hdf5_file, noise_metadata_file, target_type="box_square", padding_type="sample", start_padding_value=280, end_padding_value=280, target_phase=True, phase_padding=20, remove_empty_phase=True, transform=None, split_index=0, split_percentage=[0.8, 0.15, 0.5], norm_mode = None):
         self.event_hdf5_file = event_hdf5_file
         self.noise_hdf5_file = noise_hdf5_file
         self.noise_metadata = pd.read_csv(noise_metadata_file)
@@ -26,6 +26,7 @@ class InstanceDataset(Dataset):
         self.end_padding_value = end_padding_value
         self.target_phase = target_phase
         self.phase_padding = phase_padding
+        self.norm_mode = norm_mode
 
         self.event_start_index = 0
         self.noise_start_index = 0
@@ -70,7 +71,26 @@ class InstanceDataset(Dataset):
                 input = torch.FloatTensor(f['data'][trace_name][:])
             target, p_target, s_target = self.get_noise_target(input, self.target_type, self.target_phase)
 
+        if self.norm_mode:
+            input = self.normalize(input, self.norm_mode)
+
         return input, target, p_target, s_target, trace_name
+
+    
+    def normalize(self, data, mode = 'max'):  
+        'Normalize waveforms'
+        data -= torch.mean(data, axis=1, keepdims=True)
+        if mode == 'max':
+            max_data = torch.max(data, axis=1, keepdims=True).values
+            assert(max_data.shape[-2] == data.shape[-2])
+            max_data[max_data == 0] = 1
+            data /= max_data              
+        elif mode == 'std':               
+            std_data = torch.std(data, axis=1, keepdims=True, unbiased=False)
+            assert(std_data.shape[-2] == data.shape[-2])
+            std_data[std_data == 0] = 1
+            data /= std_data
+        return data
 
 
     def get_event_target(self, input, index, event_metadata, target_type, padding_type, start_padding_value, end_padding_value, target_phase, phase_padding):
