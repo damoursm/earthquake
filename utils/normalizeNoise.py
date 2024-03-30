@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+#import pandas as pd
 import numpy as np
 import h5py
+import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
 """
@@ -20,9 +23,6 @@ NomFichierOutput = "NE_PAS_CHOISIR_LA_DATA_BASE.hdf5"
 
 def hdf5_creation(url_event_hdf5, debut_point, max_point, chunk_size, sample_size, target_snr):
     
-    #stats_df = pd.DataFrame(columns=["mean_E", "median_E", "max_E", "min_E",
-                                     #"mean_N", "median_N", "max_N", "min_N",
-                                     #"mean_Z", "median_Z", "max_Z", "min_Z"])
     
     if hdf_target == nom_fichier_output:
         return 
@@ -37,14 +37,12 @@ def hdf5_creation(url_event_hdf5, debut_point, max_point, chunk_size, sample_siz
             new_noise_data = {}
             if url_event_hdf5 == earthquake:
                 noise_data = process_data(data_set, debut_point, max_point, chunk_size, target_snr)
-                new_noise_data[f"{nom_dataset}_earthquake"] = noise_data
+                new_noise_data[f"{nom_dataset}"] = noise_data
             elif url_event_hdf5 == noise:
                 noise_data = process_data(data_set, debut_point, max_point, chunk_size, target_snr, nombre_noise)
                 new_noise_data[f"{nom_dataset}"] = noise_data
             append_noise_data_to_hdf5(nom_fichier_output, new_noise_data)
-            
-            #stats_df = calculate_and_append_stats(stats_df, noise_data, i)
-            #stats_df.to_csv('test.csv', index=False)
+
             
             
 def process_data(data_set, debut_point, max_point, chunk_size, target_snr, nombre_noise=1):
@@ -55,35 +53,11 @@ def process_data(data_set, debut_point, max_point, chunk_size, target_snr, nombr
             end = min(start + chunk_size, rows)
             chunk = data_set[start:end, debut_point:max_point]
             chunk = normalize_signal(chunk)
-            adjusted_chunk = adjust_noise_level(chunk, target_snr) # LIGNE QUI SERT A AJOUTER DU NOISE
-            noise_data[start:end, :] = adjusted_chunk # POUR NE PAS AVOIR DE NOISE CHANGER ajusted_chunk ---> chunk
-                                                      # Et mettre la ligne au dessus en commentaire
+            #adjusted_chunk = adjust_noise_level(chunk, target_snr)
+            noise_data[start:end, :] = chunk
     return noise_data
-"""
-Le code pour calculer les stats est dans un fichier stats_csv.py 
 
-def calculate_and_append_stats(stats_df, noise_data, index):
-    mean_E = np.mean(noise_data[0], axis=0)
-    median_E = np.median(noise_data[0], axis=0)
-    max_E = np.max(noise_data[0], axis=0)
-    min_E = np.min(noise_data[0], axis=0)
-    mean_N = np.mean(noise_data[1], axis=0)
-    median_N = np.median(noise_data[1], axis=0)
-    max_N = np.max(noise_data[1], axis=0)
-    min_N = np.min(noise_data[1], axis=0)
-    mean_Z = np.mean(noise_data[2], axis=0)
-    median_Z = np.median(noise_data[2], axis=0)
-    max_Z = np.max(noise_data[2], axis=0)
-    min_Z = np.min(noise_data[2], axis=0)
 
-    new_stats_df = pd.DataFrame({
-        "mean_E": [mean_E], "median_E": [median_E], "max_E": [max_E], "min_E": [min_E],
-        "mean_N": [mean_N], "median_N": [median_N], "max_N": [max_N], "min_N": [min_N],
-        "mean_Z": [mean_Z], "median_Z": [median_Z], "max_Z": [max_Z], "min_Z": [min_Z]
-        }, index=[index])
-    return pd.concat([stats_df, new_stats_df])
-
-"""
 def calculate_snr(matrix):
     snr_values = []
     for row in matrix:
@@ -125,26 +99,59 @@ def append_noise_data_to_hdf5(path, new_data, group_name='data'):
                 del group[dataset_name]
             group.create_dataset(dataset_name, data=data_array , compression='gzip', shuffle=True)
             
-"""            
-#Merger des csv
-def merge_csv_files(file1_path, file2_path, merged_file_path):
-    df1 = pd.read_csv(file1_path)
-    df2 = pd.read_csv(file2_path)
-    merged_df = pd.concat([df1, df2], axis=1)
-    merged_df.to_csv(merged_file_path, index=False)
-merge_csv_files("Metadata.csv", "test.csv", "mergetest.csv")
-"""
-# VARIABLES
-earthquake = 'PATH VERS LE HDF5 DE EARTHQUAKE'
-noise = 'PATH VERS LE HDF5 DE NOISE'
-debutTemps = 0                           #Premier element x du signal pris 
-finTemps = 12000                         # Dernier element x du signal pris
-chunkSize = 36000                        #Loader en chunk 
-sampleSize = 1000                        #Nombre de signaux voulus
-nom_fichier_output = "test.hdf5"        #Nom du fichier HDF5 qui est output
-target_SNR = 5                            #Quantite de noise
-nombre_noise = 1                        #Nombre de noise a generer
-hdf_target = noise                      #Si le fichier est un noise ou Earthquake
+            
+def remove_suffix(dataset_name):
+    if dataset_name.endswith('_earthquake'): #sUFFIX A ENLEVER
+        return dataset_name[:-len('_earthquake')] #sUFFIX A ENLEVER
+    return dataset_name
+
+
+def removeSuffix(hdf5_file_path):
+    with h5py.File(hdf5_file_path, 'r+') as hdf5_file:
+        datasets = [str(dataset) for dataset in list(hdf5_file['data'])]
+        for dataset_name in datasets:
+            new_name = remove_suffix(dataset_name)
+            hdf5_file['data'].move(dataset_name, new_name)
+
+#removeSuffix('earthquake.hdf5')
+
+def sampleCSV(hdf5_file_path, csv_file_path, output_csv_path):
+    with h5py.File(hdf5_file_path, 'r+') as hdf5_file:
+        datasets = list(hdf5_file['data'])
+    df = pd.read_csv(csv_file_path)
+    entry_columns = ['source_id', 'station_network_code', 'station_code', 'station_location_code', 'station_channels']  
+    entry = df[entry_columns].apply(lambda x: '.'.join(x.astype(str)), axis=1).str.replace('nan', '')
+    filtered_df = df[entry.isin(datasets)]
+    filtered_df.to_csv(output_csv_path, index=False)
+    
+    num_deleted_entries = removeNotCSV('noise.hdf5', datasets)
+    print("Number of deleted entries:", num_deleted_entries)
+
+
+def removeNotCSV(hdf5_file_path, datasets_to_keep):
+    num_deleted_entries = 0
+    with h5py.File(hdf5_file_path, 'r+') as hdf5_file:
+        datasets = [str(dataset) for dataset in list(hdf5_file['data'])]  
+        for dataset_name in datasets:
+            if dataset_name not in datasets_to_keep:
+                del hdf5_file['data'][dataset_name]
+                num_deleted_entries += 1
+    return num_deleted_entries
+#sampleCSV('noise.hdf5', 'metadata_Instance_noise.csv', 'noise.csv')
+
+
+
+earthquake = 'earthquake.hdf5'
+noise = 'noise.hdf5'
+debutTemps = 0
+finTemps = 12000
+chunkSize = 36000
+sampleSize = 20
+nom_fichier_output = "test.hdf5"
+target_SNR = 5
+nombre_noise = 1
+hdf_target = earthquake
+
 
 #hdf5_creation(hdf_target, debutTemps, finTemps, chunkSize, sampleSize, target_SNR)
 
