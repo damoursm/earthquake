@@ -4,7 +4,7 @@ os.environ['KERAS_BACKEND']='tensorflow'
 from tensorflow import keras
 from keras.layers import Input
 
-from nn.eq_transformer import EqModel
+from nn.encode_decode import EncodeDecodeModel
 
 from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
@@ -52,14 +52,14 @@ def main():
     print(f"Noise metadata file (shuffled): {shuffled_noise_metadata_file}")
     
     padding_type="percentage"
-    start_padding_value=0.2
-    end_padding_value=0.2
+    start_padding_value=0
+    end_padding_value=1.4
     target_phase=True
     phase_padding=20
     remove_empty_phase=True #Keep it to true as when a phase is missing, the box will be malformed
-    target_type="box_trapezoidal"
+    target_type="box_square"
     #target_type="box_square"
-    norm_mode='max'
+    norm_mode='std'
 
     train_dataset = InstanceDataset(event_hdf5_file, shuffled_event_metadata_file, noise_hdf5_file, shuffled_noise_metadata_file, target_type=target_type, split_index=0, split_percentage=split_percentage, padding_type=padding_type, start_padding_value=start_padding_value, end_padding_value=end_padding_value, target_phase=target_phase, phase_padding=phase_padding, remove_empty_phase=remove_empty_phase, norm_mode=norm_mode)
     val_dataset = InstanceDataset(event_hdf5_file, shuffled_event_metadata_file, noise_hdf5_file, shuffled_noise_metadata_file, target_type=target_type, split_index=1, split_percentage=split_percentage, padding_type=padding_type, start_padding_value=start_padding_value, end_padding_value=end_padding_value, target_phase=target_phase, phase_padding=phase_padding, remove_empty_phase=remove_empty_phase, norm_mode=norm_mode)
@@ -127,18 +127,18 @@ def _get_model(train_data_size, input):
         batch_size = 32
         epochs = 2
     elif train_data_size <= 40000:
-        nb_filters=[8, 16, 32, 64]
-        kernel_size=[11, 9, 7, 3]
-        endcoder_depth=4
-        decoder_depth=4
-        cnn_blocks=1
+        nb_filters=[8, 16]
+        kernel_size=[11, 3]
+        endcoder_depth=2
+        decoder_depth=2
+        cnn_blocks=0
         lstm_blocks=1
         kernel_padding='same'
         activation = 'relu'         
-        drop_rate=0.1
+        drop_rate=0.2
         loss_weights=[0.25, 0.35, 0.4]
         loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
-        batch_size = 256
+        batch_size = 200
         epochs = 10
     else:
         nb_filters=[8, 16, 16, 32, 32, 64, 64]
@@ -155,7 +155,7 @@ def _get_model(train_data_size, input):
         batch_size = 200
         epochs = 5
 
-    return EqModel(nb_filters=nb_filters,
+    return EncodeDecodeModel(nb_filters=nb_filters,
               kernel_size=kernel_size,
               padding=kernel_padding,
               activationf=activation,
@@ -166,8 +166,8 @@ def _get_model(train_data_size, input):
               drop_rate=drop_rate, 
               loss_weights=loss_weights,
               loss_types=loss_types,
-              kernel_regularizer=keras.regularizers.l2(1e-6),
-              bias_regularizer=keras.regularizers.l1(1e-4)
+              kernel_regularizer=1e-3,
+              bias_regularizer=1e-3
                )(input), batch_size, epochs
 
 if __name__ == '__main__':

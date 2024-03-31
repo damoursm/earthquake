@@ -17,14 +17,74 @@ import datetime
 from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 
+import csv
+
 
 def tester(test_dataset,
            model,
+           output_name=None,
+           detection_threshold=0.50,
+           P_threshold=0.30, 
+           S_threshold=0.30,
+           number_of_plots=100, 
+           loss_weights=[0.05, 0.40, 0.55],
+           loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy'],
            batch_size=32):
+    
+    args = {
+    "test_dataset": test_dataset,
+    "model": model,
+    "output_name": output_name,
+    "detection_threshold": detection_threshold,
+    "P_threshold": P_threshold,
+    "S_threshold": S_threshold,
+    "number_of_plots": number_of_plots,
+    "loss_weights": loss_weights,
+    "loss_types": loss_types,
+    "batch_size": batch_size
+    } 
+
+
+    csvTst = open(os.path.join(args['output_name'],'X_test_results.csv'), 'w')          
+    test_writer = csv.writer(csvTst, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+    test_writer.writerow(['network_code', 
+                          'ID',
+                          'trace_name', 
+                          'p_arrival_sample',
+                          's_arrival_sample', 
+                          
+                          'number_of_detections',
+                          'detection_probability',
+                          'detection_uncertainty',
+                          
+                          'P_pick', 
+                          'P_probability',
+                          'P_uncertainty',
+                          'P_error',
+                          
+                          'S_pick',
+                          'S_probability',
+                          'S_uncertainty', 
+                          'S_error'
+                          ])  
+    csvTst.flush()
 
     test_generator = DataGeneratorPrediction(test_dataset, batch_size=batch_size)
 
-    predD, predP, predS = model.predict_generator(generator=test_generator)
+    pred_DD_mean, pred_PP_mean, pred_SS_mean = model.predict_generator(generator=test_generator)
+    pred_DD_mean = pred_DD_mean.reshape(pred_DD_mean.shape[0], pred_DD_mean.shape[1]) 
+    pred_PP_mean = pred_PP_mean.reshape(pred_PP_mean.shape[0], pred_PP_mean.shape[1]) 
+    pred_SS_mean = pred_SS_mean.reshape(pred_SS_mean.shape[0], pred_SS_mean.shape[1]) 
+    
+    pred_DD_std = np.zeros((pred_DD_mean.shape))
+    pred_PP_std = np.zeros((pred_PP_mean.shape))
+    pred_SS_std = np.zeros((pred_SS_mean.shape))
+
+    test_set={}
+
+    
+
 
 
 def trainer(train_dataset,
@@ -161,15 +221,15 @@ def trainer(train_dataset,
 
         save_dir = args["output_name"] 
         save_models = args["output_name"] 
-        callbacks=_make_callback(args, save_models, args["best_model_name.h5"])
+        callbacks=_make_callback(args, save_models, args["best_model_name"])
         
-        if args['gpuid']:           
-            os.environ['CUDA_VISIBLE_DEVICES'] = '{}'.format(gpuid)
-            tf.Session(config=tf.ConfigProto(log_device_placement=True))
-            config = tf.ConfigProto()
-            config.gpu_options.allow_growth = True
-            config.gpu_options.per_process_gpu_memory_fraction = float(args['gpu_limit']) 
-            K.tensorflow_backend.set_session(tf.Session(config=config))
+        # if args['gpuid']:           
+        #     os.environ['CUDA_VISIBLE_DEVICES'] = '{}'.format(gpuid)
+        #     tf.Session(config=tf.ConfigProto(log_device_placement=True))
+        #     config = tf.ConfigProto()
+        #     config.gpu_options.allow_growth = True
+        #     config.gpu_options.per_process_gpu_memory_fraction = float(args['gpu_limit']) 
+        #     K.tensorflow_backend.set_session(tf.Session(config=config))
             
         start_training = time.time()
 
@@ -338,7 +398,7 @@ def _document_training(history, model, start_training, end_training, save_dir, s
     trainable_count = int(np.sum([K.count_params(p) for p in model.trainable_weights]))
     non_trainable_count = int(np.sum([K.count_params(p) for p in model.non_trainable_weights]))
     
-    with open(os.path.join(save_dir,'X_report.txt'), 'a') as the_file: 
+    with open(os.path.join(save_dir,'X_learning_report.txt'), 'a') as the_file: 
         the_file.write('================== Overal Info =============================='+'\n')               
         the_file.write('date of report: '+str(datetime.datetime.now())+'\n')         
         # the_file.write('input_hdf5: '+str(args['input_hdf5'])+'\n')            
