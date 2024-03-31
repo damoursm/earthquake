@@ -113,7 +113,7 @@ def removeSuffix(hdf5_file_path):
             new_name = remove_suffix(dataset_name)
             hdf5_file['data'].move(dataset_name, new_name)
 
-#removeSuffix('earthquake.hdf5')
+removeSuffix('earthquake.hdf5')
 
 def sampleCSV(hdf5_file_path, csv_file_path, output_csv_path):
     with h5py.File(hdf5_file_path, 'r+') as hdf5_file:
@@ -127,7 +127,7 @@ def sampleCSV(hdf5_file_path, csv_file_path, output_csv_path):
     num_deleted_entries = removeNotCSV('noise.hdf5', datasets)
     print("Number of deleted entries:", num_deleted_entries)
 
-
+#Fonction pour enlever dans le hdf les entry qui ne sont pas dans le csv
 def removeNotCSV(hdf5_file_path, datasets_to_keep):
     num_deleted_entries = 0
     with h5py.File(hdf5_file_path, 'r+') as hdf5_file:
@@ -139,6 +139,15 @@ def removeNotCSV(hdf5_file_path, datasets_to_keep):
     return num_deleted_entries
 #sampleCSV('noise.hdf5', 'metadata_Instance_noise.csv', 'noise.csv')
 
+
+#Fonction pour enlever au csv les entry qui n'ont pas de pahse p ou s
+def removeNoPhaseP_S(csv_file_path, csv_output):
+    df = pd.read_csv(csv_file_path)
+    empty_rows = df['trace_P_arrival_sample'].isna() & df['trace_S_arrival_sample'].isna()
+    df = df[~empty_rows]
+    df.to_csv(csv_output, index=False)
+
+#removeNoPhaseP_S('earthquake.csv', 'test.csv')
 
 
 earthquake = 'earthquake.hdf5'
@@ -154,7 +163,6 @@ hdf_target = earthquake
 
 
 #hdf5_creation(hdf_target, debutTemps, finTemps, chunkSize, sampleSize, target_SNR)
-
 
 
 
