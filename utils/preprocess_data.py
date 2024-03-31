@@ -1,6 +1,7 @@
 import h5py
 import numpy as np
 import utils.plot
+import pandas as pd
 
 
 # Load data, I would only keep this function for testing purposes
@@ -326,7 +327,9 @@ def shuffle_events(event_metadata_file, noise_metadata_file, random_state, outpu
     noise_metadata =noise_metadata.sample(frac=1, random_state=random_state) 
 
     if balance:
-        event_metadata = event_metadata.head(noise_metadata.shape[0])
+        min_count = min(event_metadata.shape[0], noise_metadata.shape[0])
+        event_metadata = event_metadata.head(min_count)
+        noise_metadata = noise_metadata.head(min_count)
 
     event_metadata.to_csv(output_event_metadata_file, index=False)
     noise_metadata.to_csv(output_noise_metadata_file, index=False)
