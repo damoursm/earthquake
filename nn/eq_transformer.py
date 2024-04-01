@@ -1254,8 +1254,8 @@ def _encoder(filter_number, filter_size, depth, drop_rate, ker_regul, bias_regul
                    filter_size[dp], 
                    padding = padding, 
                    activation = activation,
-                   kernel_regularizer = ker_regul,
-                   bias_regularizer = bias_regul,
+                   kernel_regularizer = keras.regularizers.l2(ker_regul),
+                   bias_regularizer = keras.regularizers.l1(bias_regul),
                    )(e)             
         e = MaxPooling1D(2, padding = padding)(e)            
     return(e) 
@@ -1266,14 +1266,14 @@ def _decoder(filter_number, filter_size, depth, drop_rate, ker_regul, bias_regul
     d = inpC
     for dp in range(depth):        
         d = UpSampling1D(2)(d) 
-        if dp == 2:
+        if dp == 3:
             d = Cropping1D(cropping=(1, 1))(d)           
         d = Conv1D(filter_number[dp], 
                    filter_size[dp], 
                    padding = padding, 
                    activation = activation,
-                   kernel_regularizer = ker_regul,
-                   bias_regularizer = bias_regul,
+                   kernel_regularizer = keras.regularizers.l2(ker_regul),
+                   bias_regularizer = keras.regularizers.l1(bias_regul),
                    )(d)        
     return(d)  
  
@@ -1359,8 +1359,8 @@ class EqModel():
                  drop_rate=0.1,
                  loss_weights=[0.2, 0.3, 0.5],
                  loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy'],                                 
-                 kernel_regularizer=keras.regularizers.l1(1e-2),
-                 bias_regularizer=keras.regularizers.l1(1e-2),
+                 kernel_regularizer=1e-2,
+                 bias_regularizer=1e-2,
                  ):
         
         self.kernel_size = kernel_size
@@ -1400,7 +1400,6 @@ class EqModel():
         for bb in range(self.BiLSTM_blocks):
             x = _block_BiLSTM(self.nb_filters[1], self.drop_rate, self.padding, x)
 
-            
         x, weightdD0 = _transformer(self.drop_rate, None, 'attentionD0', x)             
         encoded, weightdD = _transformer(self.drop_rate, None, 'attentionD', x)             
             
@@ -1453,7 +1452,7 @@ class EqModel():
         model = Model(inputs=inp, outputs=[d, P, S])
 
         model.compile(loss=self.loss_types, loss_weights=self.loss_weights,    
-            optimizer=Adam(lr=_lr_schedule(0)), metrics=[f1])
+            optimizer=Adam(learning_rate=_lr_schedule(0)), metrics=[f1])
 
         return model
 

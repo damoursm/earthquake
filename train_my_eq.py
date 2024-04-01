@@ -6,7 +6,7 @@ from keras.layers import Input
 from keras.models import load_model
 from keras.optimizers.legacy import Adam
 
-from nn.encode_decode import EncodeDecodeModel, f1, _lr_schedule
+from nn.eq_transformer import EqModel, f1, _lr_schedule, SeqSelfAttention, LayerNormalization, FeedForward
 
 from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
@@ -31,7 +31,6 @@ def main():
     final_output_dir = env_values["FINAL_OUTPUT_DIR"]
 
     best_model_name='best_model.h5'
-
 
     print("############################ Data set ############################")
 
@@ -110,7 +109,11 @@ def main():
     print("############################ Testing ############################")
 
     model_path = f'{final_output_dir}/{best_model_name}'
-    model = load_model(model_path, custom_objects={ 'f1': f1 })
+    model = load_model(model_path, custom_objects={'SeqSelfAttention': SeqSelfAttention, 
+                                                         'FeedForward': FeedForward,
+                                                         'LayerNormalization': LayerNormalization, 
+                                                         'f1': f1                                                                            
+                                                         })
 
     model.compile(loss = loss_types,
                   loss_weights = loss_weights,           
@@ -134,50 +137,21 @@ def main():
 
 
 def _get_model(train_data_size, input):
-    if train_data_size <= 2000:
-        nb_filters=[8, 16, 16, 32, 32, 64, 64]
-        kernel_size=[11, 9, 7, 7, 5, 5, 3]
-        endcoder_depth=7
-        decoder_depth=7
-        cnn_blocks=5
-        lstm_blocks=2
-        kernel_padding='same'
-        activation = 'relu'         
-        drop_rate=0.1
-        loss_weights=[0.25, 0.35, 0.4]
-        loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
-        batch_size = 32
-        epochs = 2
-    elif train_data_size <= 40000:
-        nb_filters=[8, 16]
-        kernel_size=[11, 3]
-        endcoder_depth=2
-        decoder_depth=2
-        cnn_blocks=0
-        lstm_blocks=1
-        kernel_padding='same'
-        activation = 'relu'         
-        drop_rate=0.2
-        loss_weights=[0.25, 0.35, 0.4]
-        loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
-        batch_size = 200
-        epochs = 10
-    else:
-        nb_filters=[8, 16, 16, 32, 32, 64, 64]
-        kernel_size=[11, 9, 7, 7, 5, 5, 3]
-        endcoder_depth=7
-        decoder_depth=7
-        cnn_blocks=5
-        lstm_blocks=2
-        kernel_padding='same'
-        activation = 'relu'         
-        drop_rate=0.1
-        loss_weights=[0.25, 0.35, 0.4]
-        loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
-        batch_size = 200
-        epochs = 5
+    nb_filters=[8, 16, 16, 32, 32, 64, 64, 96]
+    kernel_size=[11, 9, 7, 7, 5, 5, 3, 3]
+    endcoder_depth=8
+    decoder_depth=8
+    cnn_blocks=5
+    lstm_blocks=2
+    kernel_padding='same'
+    activation = 'relu'         
+    drop_rate=0.2
+    loss_weights=[0.20, 0.40, 0.4]
+    loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    batch_size = 200
+    epochs = 30
 
-    return EncodeDecodeModel(nb_filters=nb_filters,
+    return EqModel(nb_filters=nb_filters,
               kernel_size=kernel_size,
               padding=kernel_padding,
               activationf=activation,

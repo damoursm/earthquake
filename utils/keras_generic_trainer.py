@@ -115,6 +115,10 @@ def tester(test_dataset,
 
     plt_n = 0
     save_figs = f"{args['output_name']}/figures"
+
+    if not os.path.exists(save_figs):
+        os.makedirs(save_figs)
+
     for ts in range(pred_DD_mean.shape[0]):
         trace_name, p_sample, s_sample, data, is_earthquake = test_dataset.getinfo(ts)
         data = data.T

@@ -20,296 +20,296 @@ deprecation._PRINT_DEPRECATION_WARNINGS = False
 from utils.dataloaders.InstanceDataset import InstanceDataset
 
 
-class DataGenerator(keras.utils.Sequence):
+# class DataGenerator(keras.utils.Sequence):
     
-    """ 
+#     """ 
     
-    Keras generator with preprocessing 
+#     Keras generator with preprocessing 
     
-    Parameters
-    ----------
+#     Parameters
+#     ----------
 
-    dataset: InstanceDataset
-        Dataset to load Instance earthquakes and noise
+#     dataset: InstanceDataset
+#         Dataset to load Instance earthquakes and noise
            
-    batch_size: int, default=32
-        Batch size.
+#     batch_size: int, default=32
+#         Batch size.
             
-    shuffle: bool, default=True
-        Shuffeling the list.
+#     shuffle: bool, default=True
+#         Shuffeling the list.
 
-    Returns
-    --------        
-    Batches of two dictionaries: {'input': X}: pre-processed waveform as input {'detector': y1, 'picker_P': y2, 'picker_S': y3}: outputs including three separate numpy arrays as labels for detection, P, and S respectively.
+#     Returns
+#     --------        
+#     Batches of two dictionaries: {'input': X}: pre-processed waveform as input {'detector': y1, 'picker_P': y2, 'picker_S': y3}: outputs including three separate numpy arrays as labels for detection, P, and S respectively.
     
-    """   
+#     """   
     
-    def __init__(self, 
-                 dataset,
-                 batch_size=32,
-                 shuffle=True):
+#     def __init__(self, 
+#                  dataset,
+#                  batch_size=32,
+#                  shuffle=True):
        
-        'Initialization'
-        self.dataset = dataset
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-        self.on_epoch_end()
+#         'Initialization'
+#         self.dataset = dataset
+#         self.batch_size = batch_size
+#         self.shuffle = shuffle
+#         self.on_epoch_end()
 
-    def __len__(self):
-        'Denotes the number of batches per epoch'
-        return int(np.floor(len(self.dataset) / self.batch_size))
+#     def __len__(self):
+#         'Denotes the number of batches per epoch'
+#         return int(np.floor(len(self.dataset) / self.batch_size))
 
-    def __getitem__(self, index):
-        'Generate one batch of data'
-        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
-        X, y1, y2, y3 = self.__data_generation(indexes)
-        return ({'input': X}, {'detector': y1, 'picker_P': y2, 'picker_S': y3})
+#     def __getitem__(self, index):
+#         'Generate one batch of data'
+#         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
+#         X, y1, y2, y3 = self.__data_generation(indexes)
+#         return ({'input': X}, {'detector': y1, 'picker_P': y2, 'picker_S': y3})
 
-    def on_epoch_end(self):
-        'Updates indexes after each epoch'
-        self.indexes = np.arange(len(self.dataset))
-        if self.shuffle == True:
-            np.random.shuffle(self.indexes) 
+#     def on_epoch_end(self):
+#         'Updates indexes after each epoch'
+#         self.indexes = np.arange(len(self.dataset))
+#         if self.shuffle == True:
+#             np.random.shuffle(self.indexes) 
     
-    def _scale_amplitude(self, data, rate):
-        'Scale amplitude or waveforms'
+#     def _scale_amplitude(self, data, rate):
+#         'Scale amplitude or waveforms'
         
-        tmp = np.random.uniform(0, 1)
-        if tmp < rate:
-            data *= np.random.uniform(1, 3)
-        elif tmp < 2*rate:
-            data /= np.random.uniform(1, 3)
-        return data
+#         tmp = np.random.uniform(0, 1)
+#         if tmp < rate:
+#             data *= np.random.uniform(1, 3)
+#         elif tmp < 2*rate:
+#             data /= np.random.uniform(1, 3)
+#         return data
 
-    def _drop_channel(self, data, snr, rate):
-        'Randomly replace values of one or two components to zeros in earthquake data'
+#     def _drop_channel(self, data, snr, rate):
+#         'Randomly replace values of one or two components to zeros in earthquake data'
 
-        data = np.copy(data)
-        if np.random.uniform(0, 1) < rate and all(snr >= 10.0): 
-            c1 = np.random.choice([0, 1])
-            c2 = np.random.choice([0, 1])
-            c3 = np.random.choice([0, 1])
-            if c1 + c2 + c3 > 0:
-                data[..., np.array([c1, c2, c3]) == 0] = 0
-        return data
+#         data = np.copy(data)
+#         if np.random.uniform(0, 1) < rate and all(snr >= 10.0): 
+#             c1 = np.random.choice([0, 1])
+#             c2 = np.random.choice([0, 1])
+#             c3 = np.random.choice([0, 1])
+#             if c1 + c2 + c3 > 0:
+#                 data[..., np.array([c1, c2, c3]) == 0] = 0
+#         return data
 
-    def _drop_channel_noise(self, data, rate):
-        'Randomly replace values of one or two components to zeros in noise data'
+#     def _drop_channel_noise(self, data, rate):
+#         'Randomly replace values of one or two components to zeros in noise data'
         
-        data = np.copy(data)
-        if np.random.uniform(0, 1) < rate: 
-            c1 = np.random.choice([0, 1])
-            c2 = np.random.choice([0, 1])
-            c3 = np.random.choice([0, 1])
-            if c1 + c2 + c3 > 0:
-                data[..., np.array([c1, c2, c3]) == 0] = 0
-        return data
+#         data = np.copy(data)
+#         if np.random.uniform(0, 1) < rate: 
+#             c1 = np.random.choice([0, 1])
+#             c2 = np.random.choice([0, 1])
+#             c3 = np.random.choice([0, 1])
+#             if c1 + c2 + c3 > 0:
+#                 data[..., np.array([c1, c2, c3]) == 0] = 0
+#         return data
 
-    def _add_gaps(self, data, rate): 
-        'Randomly add gaps (zeros) of different sizes into waveforms'
+#     def _add_gaps(self, data, rate): 
+#         'Randomly add gaps (zeros) of different sizes into waveforms'
         
-        data = np.copy(data)
-        gap_start = np.random.randint(0, 4000)
-        gap_end = np.random.randint(gap_start, 5500)
-        if np.random.uniform(0, 1) < rate: 
-            data[gap_start:gap_end,:] = 0           
-        return data  
+#         data = np.copy(data)
+#         gap_start = np.random.randint(0, 4000)
+#         gap_end = np.random.randint(gap_start, 5500)
+#         if np.random.uniform(0, 1) < rate: 
+#             data[gap_start:gap_end,:] = 0           
+#         return data  
     
-    def _add_noise(self, data, snr, rate):
-        'Randomly add Gaussian noie with a random SNR into waveforms'
+#     def _add_noise(self, data, snr, rate):
+#         'Randomly add Gaussian noie with a random SNR into waveforms'
         
-        data_noisy = np.empty((data.shape))
-        if np.random.uniform(0, 1) < rate and all(snr >= 10.0): 
-            data_noisy = np.empty((data.shape))
-            data_noisy[:, 0] = data[:,0] + np.random.normal(0, np.random.uniform(0.01, 0.15)*max(data[:,0]), data.shape[0])
-            data_noisy[:, 1] = data[:,1] + np.random.normal(0, np.random.uniform(0.01, 0.15)*max(data[:,1]), data.shape[0])
-            data_noisy[:, 2] = data[:,2] + np.random.normal(0, np.random.uniform(0.01, 0.15)*max(data[:,2]), data.shape[0])    
-        else:
-            data_noisy = data
-        return data_noisy   
+#         data_noisy = np.empty((data.shape))
+#         if np.random.uniform(0, 1) < rate and all(snr >= 10.0): 
+#             data_noisy = np.empty((data.shape))
+#             data_noisy[:, 0] = data[:,0] + np.random.normal(0, np.random.uniform(0.01, 0.15)*max(data[:,0]), data.shape[0])
+#             data_noisy[:, 1] = data[:,1] + np.random.normal(0, np.random.uniform(0.01, 0.15)*max(data[:,1]), data.shape[0])
+#             data_noisy[:, 2] = data[:,2] + np.random.normal(0, np.random.uniform(0.01, 0.15)*max(data[:,2]), data.shape[0])    
+#         else:
+#             data_noisy = data
+#         return data_noisy   
          
-    def _adjust_amplitude_for_multichannels(self, data):
-        'Adjust the amplitude of multichaneel data'
+#     def _adjust_amplitude_for_multichannels(self, data):
+#         'Adjust the amplitude of multichaneel data'
         
-        tmp = np.max(np.abs(data), axis=0, keepdims=True)
-        assert(tmp.shape[-1] == data.shape[-1])
-        if np.count_nonzero(tmp) > 0:
-          data *= data.shape[-1] / np.count_nonzero(tmp)
-        return data
+#         tmp = np.max(np.abs(data), axis=0, keepdims=True)
+#         assert(tmp.shape[-1] == data.shape[-1])
+#         if np.count_nonzero(tmp) > 0:
+#           data *= data.shape[-1] / np.count_nonzero(tmp)
+#         return data
 
-    def _label(self, a=0, b=20, c=40):  
-        'Used for triangolar labeling'
+#     def _label(self, a=0, b=20, c=40):  
+#         'Used for triangolar labeling'
         
-        z = np.linspace(a, c, num = 2*(b-a)+1)
-        y = np.zeros(z.shape)
-        y[z <= a] = 0
-        y[z >= c] = 0
-        first_half = np.logical_and(a < z, z <= b)
-        y[first_half] = (z[first_half]-a) / (b-a)
-        second_half = np.logical_and(b < z, z < c)
-        y[second_half] = (c-z[second_half]) / (c-b)
-        return y
+#         z = np.linspace(a, c, num = 2*(b-a)+1)
+#         y = np.zeros(z.shape)
+#         y[z <= a] = 0
+#         y[z >= c] = 0
+#         first_half = np.logical_and(a < z, z <= b)
+#         y[first_half] = (z[first_half]-a) / (b-a)
+#         second_half = np.logical_and(b < z, z < c)
+#         y[second_half] = (c-z[second_half]) / (c-b)
+#         return y
 
-    def _add_event(self, data, addp, adds, coda_end, snr, rate): 
-        'Add a scaled version of the event into the empty part of the trace'
+#     def _add_event(self, data, addp, adds, coda_end, snr, rate): 
+#         'Add a scaled version of the event into the empty part of the trace'
        
-        added = np.copy(data)
-        additions = None
-        spt_secondEV = None
-        sst_secondEV = None
-        if addp and adds:
-            s_p = adds - addp
-            if np.random.uniform(0, 1) < rate and all(snr>=10.0) and (data.shape[0]-s_p-21-coda_end) > 20:     
-                secondEV_strt = np.random.randint(coda_end, data.shape[0]-s_p-21)
-                scaleAM = 1/np.random.randint(1, 10)
-                space = data.shape[0]-secondEV_strt  
-                added[secondEV_strt:secondEV_strt+space, 0] += data[addp:addp+space, 0]*scaleAM
-                added[secondEV_strt:secondEV_strt+space, 1] += data[addp:addp+space, 1]*scaleAM 
-                added[secondEV_strt:secondEV_strt+space, 2] += data[addp:addp+space, 2]*scaleAM          
-                spt_secondEV = secondEV_strt   
-                if  spt_secondEV + s_p + 21 <= data.shape[0]:
-                    sst_secondEV = spt_secondEV + s_p
-                if spt_secondEV and sst_secondEV:                                                                     
-                    additions = [spt_secondEV, sst_secondEV] 
-                    data = added
+#         added = np.copy(data)
+#         additions = None
+#         spt_secondEV = None
+#         sst_secondEV = None
+#         if addp and adds:
+#             s_p = adds - addp
+#             if np.random.uniform(0, 1) < rate and all(snr>=10.0) and (data.shape[0]-s_p-21-coda_end) > 20:     
+#                 secondEV_strt = np.random.randint(coda_end, data.shape[0]-s_p-21)
+#                 scaleAM = 1/np.random.randint(1, 10)
+#                 space = data.shape[0]-secondEV_strt  
+#                 added[secondEV_strt:secondEV_strt+space, 0] += data[addp:addp+space, 0]*scaleAM
+#                 added[secondEV_strt:secondEV_strt+space, 1] += data[addp:addp+space, 1]*scaleAM 
+#                 added[secondEV_strt:secondEV_strt+space, 2] += data[addp:addp+space, 2]*scaleAM          
+#                 spt_secondEV = secondEV_strt   
+#                 if  spt_secondEV + s_p + 21 <= data.shape[0]:
+#                     sst_secondEV = spt_secondEV + s_p
+#                 if spt_secondEV and sst_secondEV:                                                                     
+#                     additions = [spt_secondEV, sst_secondEV] 
+#                     data = added
                  
-        return data, additions    
+#         return data, additions    
     
     
-    def _shift_event(self, data, addp, adds, coda_end, snr, rate): 
-        'Randomly rotate the array to shift the event location'
+#     def _shift_event(self, data, addp, adds, coda_end, snr, rate): 
+#         'Randomly rotate the array to shift the event location'
         
-        org_len = len(data)
-        data2 = np.copy(data)
-        addp2 = adds2 = coda_end2 = None;
-        if np.random.uniform(0, 1) < rate:             
-            nrotate = int(np.random.uniform(1, int(org_len - coda_end)))
-            data2[:, 0] = list(data[:, 0])[-nrotate:] + list(data[:, 0])[:-nrotate]
-            data2[:, 1] = list(data[:, 1])[-nrotate:] + list(data[:, 1])[:-nrotate]
-            data2[:, 2] = list(data[:, 2])[-nrotate:] + list(data[:, 2])[:-nrotate]
+#         org_len = len(data)
+#         data2 = np.copy(data)
+#         addp2 = adds2 = coda_end2 = None;
+#         if np.random.uniform(0, 1) < rate:             
+#             nrotate = int(np.random.uniform(1, int(org_len - coda_end)))
+#             data2[:, 0] = list(data[:, 0])[-nrotate:] + list(data[:, 0])[:-nrotate]
+#             data2[:, 1] = list(data[:, 1])[-nrotate:] + list(data[:, 1])[:-nrotate]
+#             data2[:, 2] = list(data[:, 2])[-nrotate:] + list(data[:, 2])[:-nrotate]
                     
-            if addp+nrotate >= 0 and addp+nrotate < org_len:
-                addp2 = addp+nrotate;
-            else:
-                addp2 = None;
-            if adds+nrotate >= 0 and adds+nrotate < org_len:               
-                adds2 = adds+nrotate;
-            else:
-                adds2 = None;                   
-            if coda_end+nrotate < org_len:                              
-                coda_end2 = coda_end+nrotate 
-            else:
-                coda_end2 = org_len                 
-            if addp2 and adds2:
-                data = data2;
-                addp = addp2;
-                adds = adds2;
-                coda_end= coda_end2;                                      
-        return data, addp, adds, coda_end      
+#             if addp+nrotate >= 0 and addp+nrotate < org_len:
+#                 addp2 = addp+nrotate;
+#             else:
+#                 addp2 = None;
+#             if adds+nrotate >= 0 and adds+nrotate < org_len:               
+#                 adds2 = adds+nrotate;
+#             else:
+#                 adds2 = None;                   
+#             if coda_end+nrotate < org_len:                              
+#                 coda_end2 = coda_end+nrotate 
+#             else:
+#                 coda_end2 = org_len                 
+#             if addp2 and adds2:
+#                 data = data2;
+#                 addp = addp2;
+#                 adds = adds2;
+#                 coda_end= coda_end2;                                      
+#         return data, addp, adds, coda_end      
     
-    def _pre_emphasis(self, data, pre_emphasis=0.97):
-        'apply the pre_emphasis'
+#     def _pre_emphasis(self, data, pre_emphasis=0.97):
+#         'apply the pre_emphasis'
 
-        for ch in range(self.n_channels): 
-            bpf = data[:, ch]  
-            data[:, ch] = np.append(bpf[0], bpf[1:] - pre_emphasis * bpf[:-1])
-        return data
+#         for ch in range(self.n_channels): 
+#             bpf = data[:, ch]  
+#             data[:, ch] = np.append(bpf[0], bpf[1:] - pre_emphasis * bpf[:-1])
+#         return data
                     
-    def __data_generation(self, list_IDs_temp):
-        'read the waveforms'  
-        i=0
-        index = list_IDs_temp[i]       
-        data, detection, p_phase, s_phase, _ = self.dataset[index]
-        data = data.T
+#     def __data_generation(self, list_IDs_temp):
+#         'read the waveforms'  
+#         i=0
+#         index = list_IDs_temp[i]       
+#         data, detection, p_phase, s_phase, _ = self.dataset[index]
+#         data = data.T
 
-        X = np.zeros((self.batch_size, data.shape[0], data.shape[1]))
-        y1 = np.zeros((self.batch_size, len(detection), 1))
-        y2 = np.zeros((self.batch_size, len(p_phase), 1))
-        y3 = np.zeros((self.batch_size, len(s_phase), 1))
+#         X = np.zeros((self.batch_size, data.shape[0], data.shape[1]))
+#         y1 = np.zeros((self.batch_size, len(detection), 1))
+#         y2 = np.zeros((self.batch_size, len(p_phase), 1))
+#         y3 = np.zeros((self.batch_size, len(s_phase), 1))
 
-        X[i, :, :] = data
-        y1[i, :, :] = detection[..., np.newaxis]
-        y2[i, :, :] = p_phase[..., np.newaxis]
-        y3[i, :, :] = s_phase[..., np.newaxis]
+#         X[i, :, :] = data
+#         y1[i, :, :] = detection[..., np.newaxis]
+#         y2[i, :, :] = p_phase[..., np.newaxis]
+#         y3[i, :, :] = s_phase[..., np.newaxis]
 
-        # Generate data
-        for i in range(1, len(list_IDs_temp)):
-            index = list_IDs_temp[i]
-            data, detection, p_phase, s_phase, _ = self.dataset[index]
-            data = data.T
+#         # Generate data
+#         for i in range(1, len(list_IDs_temp)):
+#             index = list_IDs_temp[i]
+#             data, detection, p_phase, s_phase, _ = self.dataset[index]
+#             data = data.T
 
-            X[i, :, :] = data
-            y1[i, :, :] = detection[..., np.newaxis]
-            y2[i, :, :] = p_phase[..., np.newaxis]
-            y1[i, :, :] = s_phase[..., np.newaxis]              
+#             X[i, :, :] = data
+#             y1[i, :, :] = detection[..., np.newaxis]
+#             y2[i, :, :] = p_phase[..., np.newaxis]
+#             y1[i, :, :] = s_phase[..., np.newaxis]              
       
-        return X, y1.astype('float32'), y2.astype('float32'), y3.astype('float32')
+#         return X, y1.astype('float32'), y2.astype('float32'), y3.astype('float32')
 
 
-class DataGeneratorPrediction(keras.utils.Sequence):
+# class DataGeneratorPrediction(keras.utils.Sequence):
     
-    """ 
-    Keras generator with preprocessing. For prediction. 
+#     """ 
+#     Keras generator with preprocessing. For prediction. 
     
-    Parameters
-    ----------
-    dataset: InstanceDataset
-        Dataset to load Instance earthquakes and noise
+#     Parameters
+#     ----------
+#     dataset: InstanceDataset
+#         Dataset to load Instance earthquakes and noise
             
-    batch_size: int, default=32
-        Batch size.
+#     batch_size: int, default=32
+#         Batch size.
 
         
-    Returns
-    --------        
-    Batches of two dictionaries: {'input': X}: pre-processed waveform as input {'detector': y1, 'picker_P': y2, 'picker_S': y3}: outputs including three separate numpy arrays as labels for detection, P, and S respectively.
+#     Returns
+#     --------        
+#     Batches of two dictionaries: {'input': X}: pre-processed waveform as input {'detector': y1, 'picker_P': y2, 'picker_S': y3}: outputs including three separate numpy arrays as labels for detection, P, and S respectively.
    
     
-    """   
+#     """   
     
-    def __init__(self, 
-                 dataset,
-                 batch_size=32):
+#     def __init__(self, 
+#                  dataset,
+#                  batch_size=32):
        
-        'Initialization'
-        self.dataset = dataset
-        self.batch_size = batch_size
-        self.on_epoch_end()
+#         'Initialization'
+#         self.dataset = dataset
+#         self.batch_size = batch_size
+#         self.on_epoch_end()
 
-    def __len__(self):
-        'Denotes the number of batches per epoch'
-        return int(np.floor(len(self.dataset) / self.batch_size))
+#     def __len__(self):
+#         'Denotes the number of batches per epoch'
+#         return int(np.floor(len(self.dataset) / self.batch_size))
 
-    def __getitem__(self, index):
-        'Generate one batch of data'
-        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
-        X = self.__data_generation(indexes)
-        return ({'input': X})
+#     def __getitem__(self, index):
+#         'Generate one batch of data'
+#         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
+#         X = self.__data_generation(indexes)
+#         return ({'input': X})
 
-    def on_epoch_end(self):
-        'Updates indexes after each epoch'
-        self.indexes = np.arange(len(self.dataset))
+#     def on_epoch_end(self):
+#         'Updates indexes after each epoch'
+#         self.indexes = np.arange(len(self.dataset))
  
-    def __data_generation(self, list_IDs_temp):
-        'read the waveforms'   
-        i=0
-        index = list_IDs_temp[i]       
-        data, _, _, _, _ = self.dataset[index]
-        data = data.T
+#     def __data_generation(self, list_IDs_temp):
+#         'read the waveforms'   
+#         i=0
+#         index = list_IDs_temp[i]       
+#         data, _, _, _, _ = self.dataset[index]
+#         data = data.T
 
-        X = np.zeros((self.batch_size, data.shape[0], data.shape[1]))
+#         X = np.zeros((self.batch_size, data.shape[0], data.shape[1]))
 
-        X[i, :, :] = data
+#         X[i, :, :] = data
 
-        # Generate data
-        for i in range(1, len(list_IDs_temp)):
-            index = list_IDs_temp[i]
-            data, _, _, _, _ = self.dataset[index]
-            data = data.T
+#         # Generate data
+#         for i in range(1, len(list_IDs_temp)):
+#             index = list_IDs_temp[i]
+#             data, _, _, _, _ = self.dataset[index]
+#             data = data.T
 
-            X[i, :, :] = data
+#             X[i, :, :] = data
 
-        return X
+#         return X
     
    
 

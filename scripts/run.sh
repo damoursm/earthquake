@@ -19,7 +19,7 @@ fi
 
 if [ -z "$python_file" ]
 then
-    python_file=train.py
+    python_file=train_my_eq_cluster.py
 fi
 
 if [ -z "$cpu" ]
