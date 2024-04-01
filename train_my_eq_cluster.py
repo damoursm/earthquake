@@ -18,6 +18,7 @@ from utils.dataloaders.InstanceDataset import InstanceDataset
 from utils.preprocess_data import shuffle_events
 from utils.keras_generic_trainer import trainer, tester
 
+import h5py
 
 def main():
     env_values = dotenv_values(".env")
@@ -39,6 +40,22 @@ def main():
         os.makedirs(temp_dir_output)
 
     print("############################ Data set ############################")
+
+    def remove_suffix(dataset_name):
+        if dataset_name.endswith('_earthquake'):
+            return dataset_name[:-len('_earthquake')]
+        return dataset_name
+
+    def removeSuffix(hdf5_file_path):
+        with h5py.File(hdf5_file_path, 'r+') as hdf5_file:
+            datasets = list(hdf5_file['data'])
+            for dataset_name in datasets:
+                new_name = remove_suffix(dataset_name)
+                hdf5_file['data'].move(dataset_name, new_name)
+
+
+    removeSuffix(event_hdf5_file)
+
 
     shuffled_event_metadata_file, shuffled_noise_metadata_file = shuffle_events(
         event_metadata_file=event_metadata_file,
