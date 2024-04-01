@@ -3,8 +3,10 @@ import os
 os.environ['KERAS_BACKEND']='tensorflow'
 from tensorflow import keras
 from keras.layers import Input
+from keras.models import load_model
+from keras.optimizers.legacy import Adam
 
-from nn.encode_decode import EncodeDecodeModel
+from nn.encode_decode import EncodeDecodeModel, f1, _lr_schedule
 
 from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
@@ -13,7 +15,9 @@ from dotenv import dotenv_values
 
 from utils.dataloaders.InstanceDataset import InstanceDataset
 from utils.preprocess_data import shuffle_events
-from utils.keras_generic_trainer import trainer
+from utils.keras_generic_trainer import trainer, tester
+
+from sklearn.metrics import confusion_matrix, classification_report
 
 
 def main():
@@ -86,7 +90,7 @@ def main():
     input_dimention=(12000, 3)
 
     inp = Input(shape=input_dimention, name='input') 
-    model, batch_size, epochs = _get_model(len(train_dataset), inp)
+    model, batch_size, epochs, loss_types, loss_weights = _get_model(len(train_dataset), inp)
     model.summary()
 
     print("############################ Training ############################")
@@ -107,7 +111,27 @@ def main():
     
     print("############################ Testing ############################")
 
+    model_path = f'{final_output_dir}/{best_model_name}'
+    model = load_model(model_path, custom_objects={ 'f1': f1 })
 
+    model.compile(loss = loss_types,
+                  loss_weights = loss_weights,           
+                  optimizer = Adam(learning_rate=_lr_schedule(0)),
+                  metrics = [f1])
+    
+    tester(test_dataset=test_dataset,
+           model=model,
+           output_name=final_output_dir,
+           detection_threshold=0.5,
+           P_threshold=0.3,
+           S_threshold=0.3,
+           estimate_uncertainty=False,
+           number_of_sampling=5,
+           number_of_plots=100,
+           loss_weights=loss_weights,
+           loss_types=loss_types,
+           batch_size=batch_size
+    )
     print("########################################################")
 
 
@@ -168,7 +192,7 @@ def _get_model(train_data_size, input):
               loss_types=loss_types,
               kernel_regularizer=1e-3,
               bias_regularizer=1e-3
-               )(input), batch_size, epochs
+               )(input), batch_size, epochs, loss_types, loss_weights
 
 if __name__ == '__main__':
     main()

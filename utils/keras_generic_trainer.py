@@ -17,7 +17,12 @@ import datetime
 from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 
+from sklearn.metrics import confusion_matrix, classification_report
+
 import csv
+import pandas as pd
+
+from utils.picker_utils import picker
 
 
 def tester(test_dataset,
@@ -26,6 +31,8 @@ def tester(test_dataset,
            detection_threshold=0.50,
            P_threshold=0.30, 
            S_threshold=0.30,
+           estimate_uncertainty=True, 
+           number_of_sampling=5,
            number_of_plots=100, 
            loss_weights=[0.05, 0.40, 0.55],
            loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy'],
@@ -38,19 +45,20 @@ def tester(test_dataset,
     "detection_threshold": detection_threshold,
     "P_threshold": P_threshold,
     "S_threshold": S_threshold,
+    "estimate_uncertainty": estimate_uncertainty,
+    "number_of_sampling": number_of_sampling,
     "number_of_plots": number_of_plots,
     "loss_weights": loss_weights,
     "loss_types": loss_types,
     "batch_size": batch_size
     } 
 
+    start_training = time.time()  
 
     csvTst = open(os.path.join(args['output_name'],'X_test_results.csv'), 'w')          
     test_writer = csv.writer(csvTst, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-    test_writer.writerow(['network_code', 
-                          'ID',
-                          'trace_name', 
+    test_writer.writerow(['trace_name', 
                           'p_arrival_sample',
                           's_arrival_sample', 
                           
@@ -66,25 +74,383 @@ def tester(test_dataset,
                           'S_pick',
                           'S_probability',
                           'S_uncertainty', 
-                          'S_error'
+                          'S_error',
+
+                          'is_earthquake'
                           ])  
     csvTst.flush()
 
     test_generator = DataGeneratorPrediction(test_dataset, batch_size=batch_size)
 
-    pred_DD_mean, pred_PP_mean, pred_SS_mean = model.predict_generator(generator=test_generator)
-    pred_DD_mean = pred_DD_mean.reshape(pred_DD_mean.shape[0], pred_DD_mean.shape[1]) 
-    pred_PP_mean = pred_PP_mean.reshape(pred_PP_mean.shape[0], pred_PP_mean.shape[1]) 
-    pred_SS_mean = pred_SS_mean.reshape(pred_SS_mean.shape[0], pred_SS_mean.shape[1]) 
+    if args['estimate_uncertainty']:
+        pred_DD = []
+        pred_PP = []
+        pred_SS = []          
+        for mc in range(args['number_of_sampling']):
+            predD, predP, predS = model.predict_generator(generator=test_generator)
+            pred_DD.append(predD)
+            pred_PP.append(predP)               
+            pred_SS.append(predS)
+                
+        pred_DD = np.array(pred_DD).reshape(args['number_of_sampling'], len(test_dataset), 12000)
+        pred_DD_mean = pred_DD.mean(axis=0)
+        pred_DD_std = pred_DD.std(axis=0)  
+        
+        pred_PP = np.array(pred_PP).reshape(args['number_of_sampling'], len(test_dataset), 12000)
+        pred_PP_mean = pred_PP.mean(axis=0)
+        pred_PP_std = pred_PP.std(axis=0)      
+        
+        pred_SS = np.array(pred_SS).reshape(args['number_of_sampling'], len(test_dataset), 12000)
+        pred_SS_mean = pred_SS.mean(axis=0)
+        pred_SS_std = pred_SS.std(axis=0) 
+    else:
+        pred_DD_mean, pred_PP_mean, pred_SS_mean = model.predict_generator(generator=test_generator)
+        pred_DD_mean = pred_DD_mean.reshape(pred_DD_mean.shape[0], pred_DD_mean.shape[1]) 
+        pred_PP_mean = pred_PP_mean.reshape(pred_PP_mean.shape[0], pred_PP_mean.shape[1]) 
+        pred_SS_mean = pred_SS_mean.reshape(pred_SS_mean.shape[0], pred_SS_mean.shape[1]) 
+        
+        pred_DD_std = np.zeros((pred_DD_mean.shape))
+        pred_PP_std = np.zeros((pred_PP_mean.shape))
+        pred_SS_std = np.zeros((pred_SS_mean.shape))
+
+    plt_n = 0
+    save_figs = f"{args['output_name']}/figures"
+    for ts in range(pred_DD_mean.shape[0]):
+        trace_name, p_sample, s_sample, data, is_earthquake = test_dataset.getinfo(ts)
+        data = data.T
+        if p_sample:
+            p_sample = int(p_sample)
+        if s_sample:
+            s_sample = int(s_sample)
+
+        matches, pick_errors, yh3=picker(args, pred_DD_mean[ts], pred_PP_mean[ts], pred_SS_mean[ts],
+                                                       pred_DD_std[ts], pred_PP_std[ts], pred_SS_std[ts], p_sample, s_sample)
+        
+        _output_writter_test(args, trace_name, p_sample, s_sample, is_earthquake, test_writer, csvTst, matches, pick_errors)
+
+        if plt_n < args['number_of_plots']:                          
+            _plotter(trace_name,
+                     p_sample,
+                     s_sample,
+                     data,
+                     is_earthquake,
+                     args,
+                     save_figs,
+                     pred_DD_mean[ts],
+                     pred_PP_mean[ts],
+                     pred_SS_mean[ts],
+                     pred_DD_std[ts],
+                     pred_PP_std[ts], 
+                     pred_SS_std[ts],
+                     matches)
+        plt_n += 1
+
+    # result = pd.read_csv(os.path.join(args['output_name'],'X_test_results.csv'))
+    result = pd.read_csv(os.path.join(args['output_name'],'X_test_results.csv'))
+    y_true = np.array(result['is_earthquake'] * 1)
+    y_pred = np.array((result['number_of_detections'] > 0) * 1)
+
+    # Compute confusion matrix
+    conf_matrix = confusion_matrix(y_true, y_pred)
+
+    # Plot confusion matrix
+    fig = plt.figure()
+    plt.imshow(conf_matrix, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title('Confusion Matrix')
+    plt.colorbar()
+    plt.xlabel('Predicted label')
+    plt.ylabel('True label')
+    plt.xticks([0, 1])
+    plt.yticks([0, 1])
+    plt.tight_layout()
+
+    for i in range(conf_matrix.shape[0]):
+        for j in range(conf_matrix.shape[1]):
+            plt.text(j, i, format(conf_matrix[i, j], 'd'), horizontalalignment="center", color="white" if conf_matrix[i, j] > conf_matrix.max() / 2 else "black")
+
+    fig.savefig(os.path.join(args['output_name'],'X_test_confusion_matrix.png'))
+
+    # Print classification report
+    class_report = classification_report(y_true, y_pred, output_dict=True)
+    report_pd = pd.DataFrame(class_report).transpose()
+    report_pd.to_csv(os.path.join(args['output_name'],"X_test_classification_report.csv"), index=True)
+
+    end_training = time.time()  
+    delta = end_training - start_training
+    hour = int(delta / 3600)
+    delta -= hour * 3600
+    minute = int(delta / 60)
+    delta -= minute * 60
+    seconds = delta     
+                    
+    with open(os.path.join(args["output_name"],'X_report.txt'), 'a') as the_file: 
+        the_file.write('================== Overal Info =============================='+'\n')               
+        the_file.write('date of report: '+str(datetime.datetime.now())+'\n')
+        the_file.write('================== Testing Parameters ======================='+'\n')  
+        the_file.write('finished the test in:  {} hours and {} minutes and {} seconds \n'.format(hour, minute, round(seconds, 2))) 
+        the_file.write('loss_types: '+str(args['loss_types'])+'\n')
+        the_file.write('loss_weights: '+str(args['loss_weights'])+'\n')
+        the_file.write('batch_size: '+str(args['batch_size'])+'\n')
+        the_file.write('total number of tests '+str(len(args['test_dataset']))+'\n')            
+        the_file.write('================== Other Parameters ========================='+'\n')        
+        the_file.write('detection_threshold: '+str(args['detection_threshold'])+'\n')            
+        the_file.write('P_threshold: '+str(args['P_threshold'])+'\n')
+        the_file.write('S_threshold: '+str(args['S_threshold'])+'\n')
+        the_file.write('number_of_plots: '+str(args['number_of_plots'])+'\n')
+        the_file.write('confusion matrix: '+str(os.path.join(args['output_name'],"X_test_classification_report.csv"))+'\n')
+        the_file.write('classification report: '+str(os.path.join(args['output_name'],"X_test_classification_report.csv"))+'\n')
+ 
+
+def _output_writter_test(args,
+                        trace_name, 
+                        p_arrival, 
+                        s_arrival,
+                        is_earthquake, 
+                        output_writer, 
+                        csvfile, 
+                        matches, 
+                        pick_errors,
+                        ):
     
-    pred_DD_std = np.zeros((pred_DD_mean.shape))
-    pred_PP_std = np.zeros((pred_PP_mean.shape))
-    pred_SS_std = np.zeros((pred_SS_mean.shape))
+    """ 
+    
+    Writes the detection & picking results into a CSV file.
 
-    test_set={}
+    Parameters
+    ----------
+    args: dic
+        A dictionary containing all of the input parameters.    
+ 
+    trace_name: str
+        Trace name.  
+
+    p_arrival: float
+        p_arrival sample  
+
+    s_arrival: float
+        s_arrival sample 
+              
+    output_writer: obj
+        For writing out the detection/picking results in the CSV file.
+        
+    csvfile: obj
+        For writing out the detection/picking results in the CSV file.  
+
+    matches: dic
+        Contains the information for the detected and picked event.  
+      
+    pick_errors: dic
+        Contains prediction errors for P and S picks.          
+        
+    Returns
+    --------  
+    X_test_results.csv  
+    
+        
+    """        
+    
+    
+    numberOFdetections = len(matches)
+    
+    if numberOFdetections != 0: 
+        D_prob =  matches[list(matches)[0]][1]
+        D_unc = matches[list(matches)[0]][2]
+
+        P_arrival = matches[list(matches)[0]][3]
+        P_prob = matches[list(matches)[0]][4] 
+        P_unc = matches[list(matches)[0]][5] 
+        P_error = pick_errors[list(matches)[0]][0]
+        
+        S_arrival = matches[list(matches)[0]][6] 
+        S_prob = matches[list(matches)[0]][7] 
+        S_unc = matches[list(matches)[0]][8]
+        S_error = pick_errors[list(matches)[0]][1]  
+        
+    else: 
+        D_prob = None
+        D_unc = None 
+
+        P_arrival = None
+        P_prob = None
+        P_unc = None
+        P_error = None
+        
+        S_arrival = None
+        S_prob = None 
+        S_unc = None
+        S_error = None
+       
+    if P_unc:
+        P_unc = round(P_unc, 3)
+
+
+    output_writer.writerow([trace_name,
+                            p_arrival,
+                            s_arrival,
+                            
+                            numberOFdetections,
+                            D_prob,
+                            D_unc,    
+                            
+                            P_arrival, 
+                            P_prob,
+                            P_unc,                             
+                            P_error,
+                            
+                            S_arrival, 
+                            S_prob,
+                            S_unc,
+                            S_error,
+
+                            is_earthquake
+                            ]) 
+    
+    csvfile.flush()  
+
+
+
 
     
+    
+    
 
+
+def _plotter(trace_name, p_sample, s_sample, data, is_earthquake, args, save_figs, yh1, yh2, yh3, yh1_std, yh2_std, yh3_std, matches):
+    
+
+    """ 
+    
+    Generates plots.
+
+    Parameters
+    ----------
+
+    trace_name: str
+        Trace name.  
+
+    args: dic
+        A dictionary containing all of the input parameters. 
+
+    save_figs: str
+        Path to the folder for saving the plots. 
+
+    yh1: 1D array
+        Detection probabilities. 
+
+    yh2: 1D array
+        P arrival probabilities.   
+      
+    yh3: 1D array
+        S arrival probabilities.  
+
+    yh1_std: 1D array
+        Detection standard deviations. 
+
+    yh2_std: 1D array
+        P arrival standard deviations.   
+      
+    yh3_std: 1D array
+        S arrival standard deviations. 
+
+    matches: dic
+        Contains the information for the detected and picked event.  
+          
+        
+    """
+    
+    spt = p_sample
+    sst = s_sample
+
+    predicted_P = []
+    predicted_S = []
+    if len(matches) >=1:
+        for match, match_value in matches.items():
+            if match_value[3]: 
+                predicted_P.append(match_value[3])
+            else:
+                predicted_P.append(None)
+                
+            if match_value[6]:
+                predicted_S.append(match_value[6])
+            else:
+                predicted_S.append(None)
+
+    data = np.array(data)
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(411)         
+    plt.plot(data[:, 0], 'k')
+    plt.rcParams["figure.figsize"] = (8,5)
+    legend_properties = {'weight':'bold'}  
+    plt.title(str(trace_name))
+    plt.tight_layout()
+    ymin, ymax = ax.get_ylim() 
+    pl = None
+    sl = None       
+    ppl = None
+    ssl = None  
+    
+    if is_earthquake:
+        pl = plt.vlines(int(spt), ymin, ymax, color='b', linewidth=2, label='P_Arrival')
+        sl = plt.vlines(int(sst), ymin, ymax, color='r', linewidth=2, label='S_Arrival')
+        if pl or sl:    
+            plt.legend(loc = 'upper right', borderaxespad=0., prop=legend_properties)     
+                            
+    ax = fig.add_subplot(412)   
+    plt.plot(data[:, 1] , 'k')
+    plt.tight_layout()                
+    if is_earthquake:
+        pl = plt.vlines(int(spt), ymin, ymax, color='b', linewidth=2, label='P_Arrival')
+        sl = plt.vlines(int(sst), ymin, ymax, color='r', linewidth=2, label='S_Arrival')
+        if pl or sl:    
+            plt.legend(loc = 'upper right', borderaxespad=0., prop=legend_properties)    
+
+    ax = fig.add_subplot(413) 
+    plt.plot(data[:, 2], 'k')   
+    plt.tight_layout()                
+    if len(predicted_P) > 0:
+        ymin, ymax = ax.get_ylim()
+        for pt in predicted_P:
+            if pt:
+                ppl = plt.vlines(int(pt), ymin, ymax, color='c', linewidth=2, label='Predicted_P_Arrival')
+    if len(predicted_S) > 0:  
+        for st in predicted_S: 
+            if st:
+                ssl = plt.vlines(int(st), ymin, ymax, color='m', linewidth=2, label='Predicted_S_Arrival')
+                
+    if ppl or ssl:    
+        plt.legend(loc = 'upper right', borderaxespad=0., prop=legend_properties) 
+
+                
+    ax = fig.add_subplot(414)
+    x = np.linspace(0, data.shape[0], data.shape[0], endpoint=True)
+    if args['estimate_uncertainty']:                               
+        plt.plot(x, yh1, 'g--', alpha = 0.5, linewidth=1.5, label='Detection')
+        lowerD = yh1-yh1_std
+        upperD = yh1+yh1_std
+        plt.fill_between(x, lowerD, upperD, alpha=0.5, edgecolor='#3F7F4C', facecolor='#7EFF99')            
+                            
+        plt.plot(x, yh2, 'b--', alpha = 0.5, linewidth=1.5, label='P_probability')
+        lowerP = yh2-yh2_std
+        upperP = yh2+yh2_std
+        plt.fill_between(x, lowerP, upperP, alpha=0.5, edgecolor='#1B2ACC', facecolor='#089FFF')  
+                                     
+        plt.plot(x, yh3, 'r--', alpha = 0.5, linewidth=1.5, label='S_probability')
+        lowerS = yh3-yh3_std
+        upperS = yh3+yh3_std
+        plt.fill_between(x, lowerS, upperS, edgecolor='#CC4F1B', facecolor='#FF9848')
+        plt.ylim((-0.1, 1.1))
+        plt.tight_layout()                
+        plt.legend(loc = 'upper right', borderaxespad=0., prop=legend_properties)                 
+    else:
+        plt.plot(x, yh1, 'g--', alpha = 0.5, linewidth=1.5, label='Detection')
+        plt.plot(x, yh2, 'b--', alpha = 0.5, linewidth=1.5, label='P_probability')
+        plt.plot(x, yh3, 'r--', alpha = 0.5, linewidth=1.5, label='S_probability')
+        plt.tight_layout()       
+        plt.ylim((-0.1, 1.1))
+        plt.legend(loc = 'upper right', borderaxespad=0., prop=legend_properties) 
+                        
+    fig.savefig(os.path.join(save_figs, f'{trace_name}.png'))
 
 
 def trainer(train_dataset,
@@ -398,7 +764,7 @@ def _document_training(history, model, start_training, end_training, save_dir, s
     trainable_count = int(np.sum([K.count_params(p) for p in model.trainable_weights]))
     non_trainable_count = int(np.sum([K.count_params(p) for p in model.non_trainable_weights]))
     
-    with open(os.path.join(save_dir,'X_learning_report.txt'), 'a') as the_file: 
+    with open(os.path.join(save_dir,'X_report.txt'), 'a') as the_file: 
         the_file.write('================== Overal Info =============================='+'\n')               
         the_file.write('date of report: '+str(datetime.datetime.now())+'\n')         
         # the_file.write('input_hdf5: '+str(args['input_hdf5'])+'\n')            

@@ -42,6 +42,27 @@ class InstanceDataset(Dataset):
         return self.events_size + self.noise_size
     
 
+    def getinfo(self, idx):
+        if(idx < self.events_size):
+            #Access events
+            index = idx + self.event_start_index
+            trace_name = self.event_metadata["trace_name"].iloc[index]
+            p_sample = self.event_metadata['trace_P_arrival_sample'].iloc[index]
+            s_sample = self.event_metadata['trace_S_arrival_sample'].iloc[index]
+            filename = self.event_hdf5_file
+            with h5py.File(filename, 'r') as f:
+                input = torch.FloatTensor(f['data'][trace_name][:])
+            return trace_name, p_sample, s_sample, input, True
+        else:
+            #Access noise
+            index = (idx % self.events_size) + self.noise_start_index
+            trace_name = self.noise_metadata["trace_name"].iloc[index]
+            filename = self.noise_hdf5_file
+            with h5py.File(filename, 'r') as f:
+                input = torch.FloatTensor(f['data'][trace_name][:])
+            return trace_name, None, None, input, False
+    
+
     def __getitem__(self, idx):
         """
         Returns 4 items:
