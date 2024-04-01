@@ -175,7 +175,7 @@ def _get_model(train_data_size, input):
     loss_weights=[0.05, 0.45, 0.50]
     loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
     batch_size = 200
-    epochs = 1
+    epochs = 70
 
     return EqModel(nb_filters=nb_filters,
               kernel_size=kernel_size,
