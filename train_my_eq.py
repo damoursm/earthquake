@@ -12,11 +12,11 @@ from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 
 from dotenv import dotenv_values
+import shutil
 
 from utils.dataloaders.InstanceDataset import InstanceDataset
 from utils.preprocess_data import shuffle_events
 from utils.keras_generic_trainer import trainer, tester
-
 
 def main():
     env_values = dotenv_values(".env")
@@ -31,6 +31,11 @@ def main():
     final_output_dir = env_values["FINAL_OUTPUT_DIR"]
 
     best_model_name='best_model.h5'
+
+    temp_dir_output = f"{temp_dir}/output"
+
+    if not os.path.exists(temp_dir_output):
+        os.makedirs(temp_dir_output)
 
     print("############################ Data set ############################")
 
@@ -95,7 +100,7 @@ def main():
     trainer(train_dataset=train_dataset,
             val_dataset=val_dataset,
             model=model,
-            output_name=final_output_dir,
+            output_name=temp_dir_output,
             shuffle=True,
             batch_size=batch_size,
             epochs=epochs,
@@ -108,7 +113,7 @@ def main():
     
     print("############################ Testing ############################")
 
-    model_path = f'{final_output_dir}/{best_model_name}'
+    model_path = f'{temp_dir_output}/{best_model_name}'
     model = load_model(model_path, custom_objects={'SeqSelfAttention': SeqSelfAttention, 
                                                          'FeedForward': FeedForward,
                                                          'LayerNormalization': LayerNormalization, 
@@ -122,7 +127,7 @@ def main():
     
     tester(test_dataset=test_dataset,
            model=model,
-           output_name=final_output_dir,
+           output_name=temp_dir_output,
            detection_threshold=0.5,
            P_threshold=0.3,
            S_threshold=0.3,
@@ -133,6 +138,10 @@ def main():
            loss_types=loss_types,
            batch_size=batch_size
     )
+
+
+    shutil.copytree(temp_dir_output, final_output_dir, dirs_exist_ok=True)
+
     print("########################################################")
 
 
@@ -145,8 +154,8 @@ def _get_model(train_data_size, input):
     lstm_blocks=2
     kernel_padding='same'
     activation = 'relu'         
-    drop_rate=0.2
-    loss_weights=[0.20, 0.40, 0.4]
+    drop_rate=0.1
+    loss_weights=[0.10, 0.45, 0.45]
     loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
     batch_size = 200
     epochs = 30

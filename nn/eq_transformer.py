@@ -241,7 +241,7 @@ class DataGenerator(keras.utils.Sequence):
             X[i, :, :] = data
             y1[i, :, :] = detection[..., np.newaxis]
             y2[i, :, :] = p_phase[..., np.newaxis]
-            y1[i, :, :] = s_phase[..., np.newaxis]              
+            y3[i, :, :] = s_phase[..., np.newaxis]              
       
         return X, y1.astype('float32'), y2.astype('float32'), y3.astype('float32')
 

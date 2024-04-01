@@ -172,7 +172,7 @@ def _get_model(train_data_size, input):
     kernel_padding='same'
     activation = 'relu'         
     drop_rate=0.1
-    loss_weights=[0.20, 0.40, 0.4]
+    loss_weights=[0.05, 0.45, 0.50]
     loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
     batch_size = 200
     epochs = 1
