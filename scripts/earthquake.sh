@@ -34,7 +34,7 @@ export PYTHONUNBUFFERED=1
 virtualenv $SLURM_TMPDIR/venv
 source $SLURM_TMPDIR/venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-cuda.txt
 
 python $3
 
