@@ -1,7 +1,12 @@
 from dotenv import dotenv_values
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('agg')
 import os
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import roc_auc_score, accuracy_score, f1_score, precision_score, recall_score
+from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.metrics import roc_auc_score, accuracy_score, f1_score, precision_score, recall_score, \
+    classification_report, confusion_matrix
 import shutil
 from torch import nn
 from dotenv import dotenv_values
@@ -119,6 +124,25 @@ def validate(model, test_data, metric_nm):
     metrics['f1'] = f1_score(test_data['source'], preds)
     metrics['precision'] = precision_score(test_data['source'], preds)
     metrics['recall'] = recall_score(test_data['source'], preds)
+
+    print(classification_report(test_data['source'], preds))
+
+    # Compute confusion matrix
+    print('Confusion Matrix')
+    conf_matrix = confusion_matrix(test_data['source'], preds)
+    print(conf_matrix)
+
+    # # Plot confusion matrix
+    # fig = plt.figure()
+    # plt.imshow(conf_matrix, interpolation='nearest', cmap=plt.cm.Blues)
+    # plt.title('Confusion Matrix')
+    # plt.colorbar()
+    # plt.xlabel('Predicted label')
+    # plt.ylabel('True label')
+    # plt.xticks([0, 1])
+    # plt.yticks([0, 1])
+    # plt.tight_layout()
+    # plt.show()
 
     # file_path = os.path.join('mlruns', self.exp_id, 'output/figures/Training_report.png')
     artifacts = []
