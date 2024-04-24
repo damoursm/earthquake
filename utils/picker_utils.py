@@ -1,3 +1,6 @@
+# Detecting picks within a float array.
+# Source: https://github.com/smousavi05/EQTransformer/blob/master/EQTransformer/core/EqT_utils.py
+
 
 from obspy.signal.trigger import trigger_onset
 import numpy as np
@@ -95,7 +98,6 @@ def _detect_peaks(x, mph=None, mpd=1, threshold=0, edge='rising', kpsh=False, va
         ind = np.sort(ind[~idel])
 
     return ind
-
 
 
 def picker(args, yh1, yh2, yh3, yh1_std, yh2_std, yh3_std, spt=None, sst=None):

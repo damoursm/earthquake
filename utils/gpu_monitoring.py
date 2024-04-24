@@ -1,4 +1,5 @@
 # GPUMonitor class to monitor GPU utilization in the background
+# Source: IFT6759 slides
 
 import subprocess
 import shutil

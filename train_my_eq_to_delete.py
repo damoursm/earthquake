@@ -3,18 +3,20 @@ import os
 os.environ['KERAS_BACKEND']='tensorflow'
 from tensorflow import keras
 from keras.layers import Input
+from keras.models import load_model
+from keras.optimizers.legacy import Adam
 
-from nn.eq_transformer import EqModel
+from nn.eq_transformer import EqModel, f1, _lr_schedule, SeqSelfAttention, LayerNormalization, FeedForward
 
 from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 
 from dotenv import dotenv_values
+import shutil
 
 from utils.dataloaders.InstanceDataset import InstanceDataset
 from utils.preprocess_data import shuffle_events
-from utils.keras_generic_trainer import trainer
-
+from utils.keras_generic_trainer import trainer, tester
 
 def main():
     env_values = dotenv_values(".env")
@@ -30,6 +32,10 @@ def main():
 
     best_model_name='best_model.h5'
 
+    temp_dir_output = f"{temp_dir}/output"
+
+    if not os.path.exists(temp_dir_output):
+        os.makedirs(temp_dir_output)
 
     print("############################ Data set ############################")
 
@@ -52,14 +58,14 @@ def main():
     print(f"Noise metadata file (shuffled): {shuffled_noise_metadata_file}")
     
     padding_type="percentage"
-    start_padding_value=0.2
-    end_padding_value=0.2
+    start_padding_value=0
+    end_padding_value=1.4
     target_phase=True
     phase_padding=20
     remove_empty_phase=True #Keep it to true as when a phase is missing, the box will be malformed
-    target_type="box_trapezoidal"
+    target_type="box_square"
     #target_type="box_square"
-    norm_mode='max'
+    norm_mode='std'
 
     train_dataset = InstanceDataset(event_hdf5_file, shuffled_event_metadata_file, noise_hdf5_file, shuffled_noise_metadata_file, target_type=target_type, split_index=0, split_percentage=split_percentage, padding_type=padding_type, start_padding_value=start_padding_value, end_padding_value=end_padding_value, target_phase=target_phase, phase_padding=phase_padding, remove_empty_phase=remove_empty_phase, norm_mode=norm_mode)
     val_dataset = InstanceDataset(event_hdf5_file, shuffled_event_metadata_file, noise_hdf5_file, shuffled_noise_metadata_file, target_type=target_type, split_index=1, split_percentage=split_percentage, padding_type=padding_type, start_padding_value=start_padding_value, end_padding_value=end_padding_value, target_phase=target_phase, phase_padding=phase_padding, remove_empty_phase=remove_empty_phase, norm_mode=norm_mode)
@@ -86,74 +92,73 @@ def main():
     input_dimention=(12000, 3)
 
     inp = Input(shape=input_dimention, name='input') 
-    model, batch_size, epochs = _get_model(len(train_dataset), inp)
+    model, batch_size, epochs, loss_types, loss_weights = _get_model(len(train_dataset), inp)
     model.summary()
 
     print("############################ Training ############################")
 
-    trainer(train_dataset=train_dataset,
-            val_dataset=val_dataset,
-            model=model,
-            output_name=final_output_dir,
-            shuffle=True,
-            batch_size=batch_size,
-            epochs=epochs,
-            monitor='val_loss',
-            patience=12,
-            gpuid=None,
-            gpu_limit=None,
-            use_multiprocessing=True,
-            best_model_name=best_model_name)
+    # trainer(train_dataset=train_dataset,
+    #         val_dataset=val_dataset,
+    #         model=model,
+    #         output_name=temp_dir_output,
+    #         shuffle=True,
+    #         batch_size=batch_size,
+    #         epochs=epochs,
+    #         monitor='val_loss',
+    #         patience=12,
+    #         gpuid=None,
+    #         gpu_limit=None,
+    #         use_multiprocessing=True,
+    #         best_model_name=best_model_name)
     
     print("############################ Testing ############################")
 
+    model_path = f'{temp_dir_output}/{best_model_name}'
+    model = load_model(model_path, custom_objects={'SeqSelfAttention': SeqSelfAttention, 
+                                                         'FeedForward': FeedForward,
+                                                         'LayerNormalization': LayerNormalization, 
+                                                         'f1': f1                                                                            
+                                                         })
+
+    model.compile(loss = loss_types,
+                  loss_weights = loss_weights,           
+                  optimizer = Adam(learning_rate=_lr_schedule(0)),
+                  metrics = [f1])
+    
+    tester(test_dataset=test_dataset,
+           model=model,
+           output_name=temp_dir_output,
+           detection_threshold=0.75,
+           P_threshold=0.05,
+           S_threshold=0.05,
+           estimate_uncertainty=False,
+           number_of_sampling=5,
+           number_of_plots=100,
+           loss_weights=loss_weights,
+           loss_types=loss_types,
+           batch_size=batch_size
+    )
+
+
+    shutil.copytree(temp_dir_output, final_output_dir, dirs_exist_ok=True)
 
     print("########################################################")
 
 
 def _get_model(train_data_size, input):
-    if train_data_size <= 2000:
-        nb_filters=[8, 16, 16, 32, 32, 64, 64]
-        kernel_size=[11, 9, 7, 7, 5, 5, 3]
-        endcoder_depth=7
-        decoder_depth=7
-        cnn_blocks=5
-        lstm_blocks=2
-        kernel_padding='same'
-        activation = 'relu'         
-        drop_rate=0.1
-        loss_weights=[0.25, 0.35, 0.4]
-        loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
-        batch_size = 32
-        epochs = 2
-    elif train_data_size <= 40000:
-        nb_filters=[8, 16, 32, 64]
-        kernel_size=[11, 9, 7, 3]
-        endcoder_depth=4
-        decoder_depth=4
-        cnn_blocks=1
-        lstm_blocks=1
-        kernel_padding='same'
-        activation = 'relu'         
-        drop_rate=0.1
-        loss_weights=[0.25, 0.35, 0.4]
-        loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
-        batch_size = 256
-        epochs = 10
-    else:
-        nb_filters=[8, 16, 16, 32, 32, 64, 64]
-        kernel_size=[11, 9, 7, 7, 5, 5, 3]
-        endcoder_depth=7
-        decoder_depth=7
-        cnn_blocks=5
-        lstm_blocks=2
-        kernel_padding='same'
-        activation = 'relu'         
-        drop_rate=0.1
-        loss_weights=[0.25, 0.35, 0.4]
-        loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
-        batch_size = 200
-        epochs = 5
+    nb_filters=[8, 16, 16, 32, 32, 64, 64, 96]
+    kernel_size=[11, 9, 7, 7, 5, 5, 3, 3]
+    endcoder_depth=8
+    decoder_depth=8
+    cnn_blocks=5
+    lstm_blocks=2
+    kernel_padding='same'
+    activation = 'relu'         
+    drop_rate=0.1
+    loss_weights=[0.10, 0.45, 0.45]
+    loss_types=['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    batch_size = 200
+    epochs = 3
 
     return EqModel(nb_filters=nb_filters,
               kernel_size=kernel_size,
@@ -166,9 +171,9 @@ def _get_model(train_data_size, input):
               drop_rate=drop_rate, 
               loss_weights=loss_weights,
               loss_types=loss_types,
-              kernel_regularizer=keras.regularizers.l2(1e-6),
-              bias_regularizer=keras.regularizers.l1(1e-4)
-               )(input), batch_size, epochs
+              kernel_regularizer=1e-3,
+              bias_regularizer=1e-3
+               )(input), batch_size, epochs, loss_types, loss_weights
 
 if __name__ == '__main__':
     main()

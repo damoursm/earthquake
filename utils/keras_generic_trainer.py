@@ -1,3 +1,8 @@
+#Highly inspired from the following but throughly adapted to our use case:
+# - https://github.com/smousavi05/EQTransformer/blob/master/EQTransformer/core/tester.py
+# - https://github.com/smousavi05/EQTransformer/blob/master/EQTransformer/core/trainer.py
+
+
 from __future__ import print_function
 import os
 os.environ['KERAS_BACKEND']='tensorflow'
@@ -233,6 +238,9 @@ def _output_writter_test(args,
 
     s_arrival: float
         s_arrival sample 
+    
+    is_earthquake: bool
+        Ground truth telling if signal is a earthquake
               
     output_writer: obj
         For writing out the detection/picking results in the CSV file.
@@ -312,25 +320,27 @@ def _output_writter_test(args,
     csvfile.flush()  
 
 
-
-
-    
-    
-    
-
-
 def _plotter(trace_name, p_sample, s_sample, data, is_earthquake, args, save_figs, yh1, yh2, yh3, yh1_std, yh2_std, yh3_std, matches):
     
 
     """ 
     
-    Generates plots.
+    Generates plots that draws the trace and the predication.
 
     Parameters
     ----------
 
     trace_name: str
-        Trace name.  
+        Trace name. 
+
+    p_sample: int
+        The P phase sample index
+
+    s_sample: int
+        The S phase sample index
+
+    is_earthquake: bool
+        Ground truth telling if signal is a earthquake
 
     args: dic
         A dictionary containing all of the input parameters. 
@@ -488,8 +498,6 @@ def trainer(train_dataset,
 
     output_name: str, default=None
         Output directory.
-        
-    model: eq transformer model
 
     shuffle: bool, default=True
         To shuffle the list prior to the training.
@@ -526,8 +534,6 @@ def trainer(train_dataset,
     output_name/history.npy: Training history.
     
     output_name/X_report.txt: A summary of the parameters used for prediction and performance.
-    
-    output_name/test.npy: A number list containing the trace names for the test set.
     
     output_name/X_learning_curve_f1.png: The learning curve of Fi-scores.
     
