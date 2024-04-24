@@ -1,7 +1,7 @@
 numpy
 scikit-learn
 scipy
-tensorflow
+tensorflow==2.15.0
 keras
 matplotlib
 pandas
