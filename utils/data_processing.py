@@ -8,10 +8,7 @@ from sklearn.preprocessing import StandardScaler
 """
 Ce code sert principalement a normalizer les donnees et ajouter du bruit gaussien en utilisant principes
 de SNR. Il est /galement possible de couper les signaux pour prendre justes certain intervalles ou merger les noises et earthaquake dans le 
-meme hdf5 en runnant la fonction avec HDF_TARGET = Noise et HDF_TARGET = Earthquake. La fonction creer un nouveau fichier HDF5 avec ce qui a ete specifier.
-
-****   SI LE FICHIER EXISTE DEJA LA FONCTION APPEND A LA PLACE DONC NE PAS RUN SUR LE DATASET COMPLET POUR EVITER DE MODIFIER LA DATABASE  ****
-NomFichierOutput = "NE_PAS_CHOISIR_LA_DATA_BASE.hdf5"     
+meme hdf5 en runnant la fonction avec HDF_TARGET = Noise et HDF_TARGET = Earthquake. La fonction creer un nouveau fichier HDF5 avec ce qui a ete specifier. 
 """
 
 
@@ -24,7 +21,7 @@ NomFichierOutput = "NE_PAS_CHOISIR_LA_DATA_BASE.hdf5"
 def hdf5_creation(url_event_hdf5, debut_point, max_point, chunk_size, sample_size, target_snr):
     
     
-    if hdf_target == nom_fichier_output:
+    if hdf_target == nom_fichier_output: # SAfety pour eviter de modifier la database originale si on entre les mauvais parametre
         return 
     
     with h5py.File(url_event_hdf5, 'r') as hdf5:
@@ -99,12 +96,11 @@ def append_noise_data_to_hdf5(path, new_data, group_name='data'):
                 del group[dataset_name]
             group.create_dataset(dataset_name, data=data_array , compression='gzip', shuffle=True)
             
-            
+#Fonction pour enlever un suffix dans un entry d'un hdf5 
 def remove_suffix(dataset_name):
-    if dataset_name.endswith('_earthquake'): #sUFFIX A ENLEVER
-        return dataset_name[:-len('_earthquake')] #sUFFIX A ENLEVER
+    if dataset_name.endswith('_earthquake'): #sUFFIX A ENLEVER <------Changer _earthquake par ce qu'on veut enlever
+        return dataset_name[:-len('_earthquake')] #sUFFIX A ENLEVER <------Changer _earthquake par ce qu'on veut enlever
     return dataset_name
-
 
 def removeSuffix(hdf5_file_path):
     with h5py.File(hdf5_file_path, 'r+') as hdf5_file:
@@ -112,8 +108,7 @@ def removeSuffix(hdf5_file_path):
         for dataset_name in datasets:
             new_name = remove_suffix(dataset_name)
             hdf5_file['data'].move(dataset_name, new_name)
-
-removeSuffix('earthquake.hdf5')
+#removeSuffix('earthquake.hdf5')
 
 
 #Fonction pour enlever dans le hdf les entry qui ne sont pas dans le csv
