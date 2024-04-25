@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Mar 28 10:34:22 2024
+
 """
+# Code qui sert à calculer des stats sur les signaux augmentés 
+# et aussi 2 fonction pour faire un matrice de correlation avec les metadata
+
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import h5py
+
 
 
 def merge_csv_correl(noiseCSV, earthquakeCSV, output_file):
