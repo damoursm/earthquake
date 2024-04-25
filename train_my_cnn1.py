@@ -7,8 +7,6 @@ from keras.layers import Input
 from keras.models import load_model, Sequential
 from keras.optimizers.legacy import Adam
 
-from nn.eq_transformer import _lr_schedule
-
 from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 
@@ -17,7 +15,7 @@ import shutil
 
 from utils.dataloaders.InstanceDataset import InstanceDataset
 from utils.preprocess_data import shuffle_events
-from utils.keras_detection_trainer import trainer, tester
+from utils.keras_detection_trainer import trainer, tester, _lr_schedule
 
 def main():
     env_values = dotenv_values(".env")

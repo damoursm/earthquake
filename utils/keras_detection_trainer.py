@@ -17,7 +17,6 @@ import numpy as np
 import time
 
 import multiprocessing
-from nn.eq_transformer import _lr_schedule
 import datetime
 from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
@@ -26,6 +25,22 @@ from sklearn.metrics import confusion_matrix, classification_report
 
 import csv
 import pandas as pd
+
+
+def _lr_schedule(epoch):
+    ' Learning rate is scheduled to be reduced after 10, 15, 20, 25 epochs.'
+    
+    lr = 1e-3
+    if epoch > 25:
+        lr *= 0.5e-3
+    elif epoch > 20:
+        lr *= 1e-3
+    elif epoch > 15:
+        lr *= 1e-2
+    elif epoch > 10:
+        lr *= 1e-1
+    print('Learning rate: ', lr)
+    return lr
 
 
 def tester(test_dataset,
