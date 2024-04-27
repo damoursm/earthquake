@@ -1,11 +1,11 @@
 from dotenv import dotenv_values
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('agg')
+matplotlib.use('Agg')
 import os
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import ConfusionMatrixDisplay
-from sklearn.metrics import roc_auc_score, accuracy_score, f1_score, precision_score, recall_score, \
+from sklearn.metrics import roc_curve, roc_auc_score, accuracy_score, f1_score, precision_score, recall_score, \
     classification_report, confusion_matrix
 import shutil
 from torch import nn
@@ -90,8 +90,6 @@ def train_cnn(hyperparams):
         dropout=hyperparams['dropout'],
     )
 
-    print(model)
-
     print("############################ Training ############################")
 
     loss = nn.CrossEntropyLoss()
@@ -114,7 +112,7 @@ def train_cnn(hyperparams):
     return best_model_path, {'metric_eval': best_val_accuracy}, []
 
 
-def validate(model, test_data, metric_nm):
+def validate(model, test_data, metric_nm, plot=False):
     metrics = {}
     preds = model.predict(test_data[features_list])
     if metric_nm == 'auc':
@@ -127,24 +125,31 @@ def validate(model, test_data, metric_nm):
 
     print(classification_report(test_data['source'], preds))
 
+    if plot:
+        # Calculate ROC curve and AUC
+        preds_proba = model.predict_proba(test_data[features_list])[:, 1]
+        fpr, tpr, thresholds = roc_curve(test_data['source'], preds_proba)
+        fpr = fpr[1:]
+        tpr = tpr[1:]
+        roc_auc = roc_auc_score(test_data['source'], preds_proba)
+
+        # Plot ROC curve
+        plt.figure()
+        plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
+        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('Receiver Operating Characteristic')
+        plt.legend(loc="lower right")
+        plt.show()
+
     # Compute confusion matrix
     print('Confusion Matrix')
     conf_matrix = confusion_matrix(test_data['source'], preds)
     print(conf_matrix)
 
-    # # Plot confusion matrix
-    # fig = plt.figure()
-    # plt.imshow(conf_matrix, interpolation='nearest', cmap=plt.cm.Blues)
-    # plt.title('Confusion Matrix')
-    # plt.colorbar()
-    # plt.xlabel('Predicted label')
-    # plt.ylabel('True label')
-    # plt.xticks([0, 1])
-    # plt.yticks([0, 1])
-    # plt.tight_layout()
-    # plt.show()
-
-    # file_path = os.path.join('mlruns', self.exp_id, 'output/figures/Training_report.png')
     artifacts = []
 
     return metrics, artifacts

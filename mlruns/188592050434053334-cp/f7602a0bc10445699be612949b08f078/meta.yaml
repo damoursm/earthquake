@@ -1,7 +1,7 @@
-artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/f7602a0bc10445699be612949b08f078/artifacts
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334-cp/f7602a0bc10445699be612949b08f078/artifacts
 end_time: 1711738512669
 entry_point_name: ''
-experiment_id: '188592050434053334'
+experiment_id: '188592050434053334-cp'
 lifecycle_stage: active
 run_id: f7602a0bc10445699be612949b08f078
 run_name: stately-crow-595

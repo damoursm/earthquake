@@ -18,7 +18,7 @@
 1. Run `python train_my_cnn.py`
 2. Check progress in the terminal. At the end, the result will be added to the `output` file mentionned in the `.env` file.
 
-## Train your own model
+## Train your own CNN model
 1. Copy one of the file `train_my_eq.py` and edit it to change the model and hyperparameters
 2. Train your model by raining `python train_my_own_model.py` 
 
@@ -62,3 +62,10 @@ You want to downlaod in parallel for STEAD:
      - squeue -u username : will show the current job being submitted
      - scontrol show job jobid : show details about the job
      - scancel jobid : cancels a job
+
+## Training your own Random Forest model
+1. Start the mlflow server by running `mlflow server` in the terminal
+2. Fill you hyperparameters and configuration in the config file config.py
+3. Activate the environment earthquake
+4. Run the script `python main.py`
+5. You can access the MLflow experiment in the UI by going to `http://localhost:5000` in your browser

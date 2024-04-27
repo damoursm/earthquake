@@ -1,7 +1,7 @@
-artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/4ab602a572c04b019852e2cb20ee08f1/artifacts
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334-cp/4ab602a572c04b019852e2cb20ee08f1/artifacts
 end_time: 1711738515564
 entry_point_name: ''
-experiment_id: '188592050434053334'
+experiment_id: '188592050434053334-cp'
 lifecycle_stage: active
 run_id: 4ab602a572c04b019852e2cb20ee08f1
 run_name: debonair-midge-758

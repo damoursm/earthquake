@@ -1,7 +1,7 @@
-artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/bedb51f3f7a34ab6a4b044123542f7a5/artifacts
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334-cp/bedb51f3f7a34ab6a4b044123542f7a5/artifacts
 end_time: 1711738499170
 entry_point_name: ''
-experiment_id: '188592050434053334'
+experiment_id: '188592050434053334-cp'
 lifecycle_stage: active
 run_id: bedb51f3f7a34ab6a4b044123542f7a5
 run_name: popular-grouse-529

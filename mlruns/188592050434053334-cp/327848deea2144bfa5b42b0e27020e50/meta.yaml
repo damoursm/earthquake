@@ -1,7 +1,7 @@
-artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/327848deea2144bfa5b42b0e27020e50/artifacts
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334-cp/327848deea2144bfa5b42b0e27020e50/artifacts
 end_time: 1711738507400
 entry_point_name: ''
-experiment_id: '188592050434053334'
+experiment_id: '188592050434053334-cp'
 lifecycle_stage: active
 run_id: 327848deea2144bfa5b42b0e27020e50
 run_name: serious-goose-116

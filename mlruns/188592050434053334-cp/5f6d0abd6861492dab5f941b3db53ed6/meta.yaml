@@ -1,7 +1,7 @@
-artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/5f6d0abd6861492dab5f941b3db53ed6/artifacts
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334-cp/5f6d0abd6861492dab5f941b3db53ed6/artifacts
 end_time: 1711738500370
 entry_point_name: ''
-experiment_id: '188592050434053334'
+experiment_id: '188592050434053334-cp'
 lifecycle_stage: active
 run_id: 5f6d0abd6861492dab5f941b3db53ed6
 run_name: sneaky-frog-285

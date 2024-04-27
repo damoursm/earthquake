@@ -1,7 +1,7 @@
-artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/e64cd05b852e4efb91c928744c950a0d/artifacts
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334-cp/e64cd05b852e4efb91c928744c950a0d/artifacts
 end_time: 1711738516585
 entry_point_name: ''
-experiment_id: '188592050434053334'
+experiment_id: '188592050434053334-cp'
 lifecycle_stage: active
 run_id: e64cd05b852e4efb91c928744c950a0d
 run_name: marvelous-vole-910

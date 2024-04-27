@@ -1,7 +1,7 @@
-artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/c11a189232e44337bcbb8bdfef1942a1/artifacts
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334-cp/c11a189232e44337bcbb8bdfef1942a1/artifacts
 end_time: 1711738497581
 entry_point_name: ''
-experiment_id: '188592050434053334'
+experiment_id: '188592050434053334-cp'
 lifecycle_stage: active
 run_id: c11a189232e44337bcbb8bdfef1942a1
 run_name: shivering-hawk-478

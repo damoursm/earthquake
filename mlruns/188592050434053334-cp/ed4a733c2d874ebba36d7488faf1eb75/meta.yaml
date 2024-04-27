@@ -1,7 +1,7 @@
-artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/ed4a733c2d874ebba36d7488faf1eb75/artifacts
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334-cp/ed4a733c2d874ebba36d7488faf1eb75/artifacts
 end_time: 1711738510406
 entry_point_name: ''
-experiment_id: '188592050434053334'
+experiment_id: '188592050434053334-cp'
 lifecycle_stage: active
 run_id: ed4a733c2d874ebba36d7488faf1eb75
 run_name: skillful-cub-668

@@ -1,7 +1,7 @@
-artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334/f8a6c4dc67114cd9b894f92c998ea271/artifacts
+artifact_uri: file:///C:/Users/Math/PycharmProjects/pythonProject/earthquake-project/mlruns/188592050434053334-cp/f8a6c4dc67114cd9b894f92c998ea271/artifacts
 end_time: 1711738503116
 entry_point_name: ''
-experiment_id: '188592050434053334'
+experiment_id: '188592050434053334-cp'
 lifecycle_stage: active
 run_id: f8a6c4dc67114cd9b894f92c998ea271
 run_name: masked-bee-267

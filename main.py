@@ -14,8 +14,6 @@ from config import \
     EXPERIMENT_NAME, \
     FEATURES, \
     HYPERPARAMETERS, \
-    INSTANCE_EVENTS_FILENAME, \
-    INSTANCE_NOISE_FILENAME, \
     INSTANCE_EVENTS_METADATA_FILENAME, \
     INSTANCE_NOISE_METADATA_FILENAME, \
     BALANCE_METADATA, \
@@ -130,10 +128,6 @@ class MLflowExperiment():
         else:
             metrics, artifacts = validate(self.best_model, self.df_test, self.best_hyperparams)
             self.run_id = self.push_run(self.best_hyperparams, metrics, artifacts, tags={'test': True, 'RETRAIN_FOR_TEST': RETRAIN_FOR_TEST, 'BALANCE_METADATA': BALANCE_METADATA, 'features': FEATURES})
-
-        # Scale test
-        # test_data = scale(scaler=train_scaler)
-        # test(test_data, best_hyperparams)
 
     def push_run(self, hyperparams, results, artifacts=[], save_model=False, tags=None):
         with mlflow.start_run(experiment_id=self.exp_id) as active_run:
