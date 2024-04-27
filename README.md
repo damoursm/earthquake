@@ -1,6 +1,6 @@
 # Local development
 ## Requirements
-1. Download the data sample from:
+1. Download the data sample from: http://repo.pi.ingv.it/instance/Instance_sample_dataset_v2.tar.bz2
 1. Create an environment variable file, called `.env` at the root of the project. This is to set the `data` and `output` paths. Change the variable value to your actual data and output location. The folder and files should exist before you run the code.
   - EVENT_HDF5_FILE="data/instance_samples/Instance_events_counts_10k.hdf5"
   - EVENT_METADATA_FILE="data/instance_samples/metadata_Instance_events_10k.csv"
@@ -15,7 +15,7 @@
 1. Run `python train_my_eq.py` from the root of the project
 2. Check progress in the terminal. At the end, the result will be added to the `output` file mentionned in the `.env` file.
 ### CNN model
-1. Run `python train_my_cnn.py`
+1. Run `python train_my_cnn1.py` or `python train_my_cnn2.py`
 2. Check progress in the terminal. At the end, the result will be added to the `output` file mentionned in the `.env` file.
 
 ## Train your own model
