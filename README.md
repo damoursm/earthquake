@@ -18,7 +18,7 @@
 1. Run `python train_my_cnn1.py` or `python train_my_cnn2.py`
 2. Check progress in the terminal. At the end, the result will be added to the `output` file mentionned in the `.env` file.
 
-## Train your own CNN model
+## Train your own model
 1. Copy one of the file `train_my_eq.py` and edit it to change the model and hyperparameters
 2. Train your model by raining `python train_my_own_model.py` 
 
