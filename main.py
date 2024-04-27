@@ -1,14 +1,10 @@
 from datetime import datetime
 import mlflow
-import os
 import skopt
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 
-from utils.features_engineering import data_balance, data_enrich, scale, shap_feat_imp
+from utils.features_engineering import data_balance, data_enrich, scale
 from utils.training import train_validate, validate
-from utils.data_load import load_dataset
-from utils.dataloaders.InstanceDataset import InstanceDataset
 
 from config import \
     EXPERIMENT_NAME, \
